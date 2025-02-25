@@ -52,7 +52,7 @@ export default defineUserConfig({
 
     docsRepo: 'laravel-hyperf/laravel-hyperf.com',
 
-    docsBranch: 'master/docs',
+    docsBranch: 'main/docs',
 
     navbar: [
       '/',

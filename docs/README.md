@@ -8,16 +8,16 @@ actions:
     type: primary
 
   - text: GitHub
-    link: https://github.com/swooletw/laravel-hyperf
+    link: https://github.com/laravel-hyperf/laravel-hyperf
     type: secondary
 
 features:
-  - title: Laravel Style
-    details: Adopts Laravel's directory structure and component styles, allowing Laravel developers to quickly adapt.
+  - title: Laravel Friendly
+    details: By porting Laravel's core infrastructure and fundamental components, this framework enables Laravel developers to quickly adapt to it.
   - title: High Performance
-    details: Built on the Hyperf framework, leveraging coroutines to provide exceptional performance and concurrency handling.
+    details: Leveraging Swoole's native coroutine support, it delivers exceptional performance and efficient concurrency handling.
   - title: Ecosystem Compatibility
-    details: Compatible with the Hyperf ecosystem, sharing the same community resources and packages.
+    details: Laravel Hyperf is compatible with the Hyperf ecosystem, sharing the same community resources and packages.
 
 footer: MIT Licensed | Copyright © 2024-present Laravel Hyperf
 ---

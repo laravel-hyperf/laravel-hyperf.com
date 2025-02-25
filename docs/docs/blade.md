@@ -3,7 +3,7 @@
 
 ## Introduction
 
-Blade is the simple, yet powerful templating engine that is included with Laravel. Unlike some PHP templating engines, Blade does not restrict you from using plain PHP code in your templates. In fact, all Blade templates are compiled into plain PHP code and cached until they are modified, meaning Blade adds essentially zero overhead to your application. Blade template files use the `.blade.php` file extension and are typically stored in the `resources/views` directory.
+Blade is the simple, yet powerful templating engine that is included with Laravel Hyperf. Unlike some PHP templating engines, Blade does not restrict you from using plain PHP code in your templates. In fact, all Blade templates are compiled into plain PHP code and cached until they are modified, meaning Blade adds essentially zero overhead to your application. Blade template files use the `.blade.php` file extension and are typically stored in the `resources/views` directory.
 
 Blade views may be returned from routes or controllers using the global `view` helper. Of course, as mentioned in the documentation on [views](/docs/views), data may be passed to the Blade view using the `view` helper's second argument:
 
@@ -12,10 +12,6 @@ Route::get('/', function () {
     return view('greeting', ['name' => 'Finn']);
 });
 ```
-
-::: note
-`@auth` and `@session` directives are not available in Hyperf's Blade implementation.
-:::
 
 ## Displaying Data
 
@@ -52,8 +48,8 @@ By default, Blade will double encode HTML entities. If you would like to disable
 
 namespace App\Providers;
 
-use SwooleTW\Hyperf\Support\Facades\Blade;
-use SwooleTW\Hyperf\Support\ServiceProvider;
+use LaravelHyperf\Support\Facades\Blade;
+use LaravelHyperf\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -84,7 +80,7 @@ Be very careful when echoing content that is supplied by users of your applicati
 Since many JavaScript frameworks also use "curly" braces to indicate a given expression should be displayed in the browser, you may use the `@` symbol to inform the Blade rendering engine an expression should remain untouched. For example:
 
 ```html
-<h1>Laravel</h1>
+<h1>Laravel Hyperf</h1>
 
 Hello, @{{ name }}.
 ```
@@ -111,15 +107,15 @@ Sometimes you may pass an array to your view with the intention of rendering it 
 </script>
 ```
 
-However, instead of manually calling `json_encode`, you may use the `SwooleTW\Hyperf\Support\Js::from` method directive. The `from` method accepts the same arguments as PHP's `json_encode` function; however, it will ensure that the resulting JSON is properly escaped for inclusion within HTML quotes. The `from` method will return a string `JSON.parse` JavaScript statement that will convert the given object or array into a valid JavaScript object:
+However, instead of manually calling `json_encode`, you may use the `LaravelHyperf\Support\Js::from` method directive. The `from` method accepts the same arguments as PHP's `json_encode` function; however, it will ensure that the resulting JSON is properly escaped for inclusion within HTML quotes. The `from` method will return a string `JSON.parse` JavaScript statement that will convert the given object or array into a valid JavaScript object:
 
 ```html
 <script>
-    var app = {{ SwooleTW\Hyperf\Support\Js::from($array) }};
+    var app = {{ LaravelHyperf\Support\Js::from($array) }};
 </script>
 ```
 
-The latest versions of the Laravel application skeleton include a `Js` facade, which provides convenient access to this functionality within your Blade templates:
+The latest versions of the Laravel Hyperf application skeleton include a `Js` facade, which provides convenient access to this functionality within your Blade templates:
 
 ```html
 <script>
@@ -181,6 +177,32 @@ In addition to the conditional directives already discussed, the `@isset` and `@
 @endempty
 ```
 
+#### Authentication Directives
+
+The `@auth` and `@guest` directives may be used to quickly determine if the current user is [authenticated](/docs/authentication) or is a guest:
+
+```html
+@auth
+    // The user is authenticated...
+@endauth
+
+@guest
+    // The user is not authenticated...
+@endguest
+```
+
+If needed, you may specify the authentication guard that should be checked when using the `@auth` and `@guest` directives:
+
+```html
+@auth('admin')
+    // The user is authenticated...
+@endauth
+
+@guest('admin')
+    // The user is not authenticated...
+@endguest
+```
+
 #### Environment Directives
 
 You may check if the application is running in the production environment using the `@production` directive:
@@ -225,6 +247,18 @@ You may use the `sectionMissing` directive to determine if a section does not ha
         @include('default-navigation')
     </div>
 @endif
+```
+
+#### Session Directives
+
+The `@session` directive may be used to determine if a [session](/docs/session) value exists. If the session value exists, the template contents within the `@session` and `@endsession` directives will be evaluated. Within the `@session` directive's contents, you may echo the `$value` variable to display the session value:
+
+```html
+@session('status')
+    <div class="p-4 bg-green-100">
+        {{ $value }}
+    </div>
+@endsession
 ```
 
 ### Switch Statements
@@ -406,7 +440,7 @@ Even though the included view will inherit all data available in the parent view
 @include('view.name', ['status' => 'complete'])
 ```
 
-If you attempt to `@include` a view which does not exist, Laravel will throw an error. If you would like to include a view that may or may not be present, you should use the `@includeIf` directive:
+If you attempt to `@include` a view which does not exist, Laravel Hyperf will throw an error. If you would like to include a view that may or may not be present, you should use the `@includeIf` directive:
 
 ```html
 @includeIf('view.name', ['status' => 'complete'])
@@ -499,7 +533,7 @@ php artisan make:component Alert
 namespace App\View\Component;
 
 use Hyperf\ViewEngine\Component\Component;
-use SwooleTW\Hyperf\Support\Facades\View;
+use LaravelHyperf\Support\Facades\View;
 
 class Alert extends Component
 {
@@ -533,7 +567,7 @@ When writing components for your own application, components are automatically d
 However, if you are building a package that utilizes Blade components, you will need to manually register your component class and its HTML tag alias. You should typically register your components in the `boot` method of your package's service provider:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Blade;
+use LaravelHyperf\Support\Facades\Blade;
 
 /**
  * Bootstrap your package's services.
@@ -562,7 +596,7 @@ Once your component has been registered, it may be rendered using its tag alias:
 Alternatively, you may use the `componentNamespace` method to autoload component classes by convention. For example, a `Nightshade` package might have `Calendar` and `ColorPicker` components that reside within the `Package\Views\Components` namespace:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Blade;
+use LaravelHyperf\Support\Facades\Blade;
 
 /**
  * Bootstrap your package's services.
@@ -601,7 +635,7 @@ If the component class is nested deeper within the `app/View/Components` directo
 If you would like to conditionally render your component, you may define a `shouldRender` method on your component class. If the `shouldRender` method returns `false` the component will not be rendered:
 
 ```php
-use Hyperf\Stringable\Str;
+use LaravelHyperf\Support\Str;
 
 /**
  * Whether the component should be rendered
@@ -757,7 +791,7 @@ The closure should return a string. If the returned string corresponds to an exi
 
 #### Additional Dependencies
 
-If your component requires dependencies from Laravel's [service container](/docs/container), you may list them before any of the component's data attributes and they will automatically be injected by the container:
+If your component requires dependencies from Laravel Hyperf's [service container](/docs/container), you may list them before any of the component's data attributes and they will automatically be injected by the container:
 
 ```php
 use App\Services\AlertCreator;
@@ -1041,7 +1075,7 @@ Additionally, the `hasActualContent` method may be used to determine if the slot
 
 #### Scoped Slots
 
-If you have used a JavaScript framework such as Vue, you may be familiar with "scoped slots", which allow you to access data or methods from the component within your slot. You may achieve similar behavior in Laravel by defining public methods or properties on your component and accessing the component within your slot via the `$component` variable. In this example, we will assume that the `x-alert` component has a public `formatAlert` method defined on its component class:
+If you have used a JavaScript framework such as Vue, you may be familiar with "scoped slots", which allow you to access data or methods from the component within your slot. You may achieve similar behavior in Laravel Hyperf by defining public methods or properties on your component and accessing the component within your slot via the `$component` variable. In this example, we will assume that the `x-alert` component has a public `formatAlert` method defined on its component class:
 
 ```html
 <x-alert>
@@ -1112,7 +1146,7 @@ public function render(): string
 
 ### Dynamic Components
 
-Sometimes you may need to render a component but not know which component should be rendered until runtime. In this situation, you may use Laravel's built-in `dynamic-component` component to render the component based on a runtime value or variable:
+Sometimes you may need to render a component but not know which component should be rendered until runtime. In this situation, you may use Laravel Hyperf's built-in `dynamic-component` component to render the component based on a runtime value or variable:
 
 ```html
 // $componentName = "secondary-button";
@@ -1128,10 +1162,10 @@ The following documentation on manually registering components is primarily appl
 
 When writing components for your own application, components are automatically discovered within the `app/View/Components` directory and `resources/views/components` directory.
 
-However, if you are building a package that utilizes Blade components or placing components in non-conventional directories, you will need to manually register your component class and its HTML tag alias so that Laravel knows where to find the component. You should typically register your components in the `boot` method of your package's service provider:
+However, if you are building a package that utilizes Blade components or placing components in non-conventional directories, you will need to manually register your component class and its HTML tag alias so that Laravel Hyperf knows where to find the component. You should typically register your components in the `boot` method of your package's service provider:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Blade;
+use LaravelHyperf\Support\Facades\Blade;
 use VendorPackage\View\Components\AlertComponent;
 
 /**
@@ -1175,7 +1209,7 @@ Once your component has been registered, it may be rendered using its tag alias:
 Alternatively, you may use the `componentNamespace` method to autoload component classes by convention. For example, a `Nightshade` package might have `Calendar` and `ColorPicker` components that reside within the `Package\Views\Components` namespace:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Blade;
+use LaravelHyperf\Support\Facades\Blade;
 
 /**
  * Bootstrap your package's services.
@@ -1500,7 +1534,7 @@ If you would like to prepend content onto the beginning of a stack, you should u
 
 ## Service Injection
 
-The `@inject` directive may be used to retrieve a service from the Laravel [service container](/docs/container). The first argument passed to `@inject` is the name of the variable the service will be placed into, while the second argument is the class or interface name of the service you wish to resolve:
+The `@inject` directive may be used to retrieve a service from the Laravel Hyperf [service container](/docs/container). The first argument passed to `@inject` is the name of the variable the service will be placed into, while the second argument is the class or interface name of the service you wish to resolve:
 
 ```html
 @inject('metrics', 'App\Services\MetricsService')
@@ -1521,8 +1555,8 @@ The following example creates a `@datetime($var)` directive which formats a give
 
 namespace App\Providers;
 
-use SwooleTW\Hyperf\Support\Facades\Blade;
-use SwooleTW\Hyperf\Support\ServiceProvider;
+use LaravelHyperf\Support\Facades\Blade;
+use LaravelHyperf\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -1563,7 +1597,7 @@ If you attempt to "echo" an object using Blade, the object's `__toString` method
 In these cases, Blade allows you to register a custom echo handler for that particular type of object. To accomplish this, you should invoke Blade's `stringable` method. The `stringable` method accepts a closure. This closure should type-hint the type of object that it is responsible for rendering. Typically, the `stringable` method should be invoked within the `boot` method of your application's `AppServiceProvider` class:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Blade;
+use LaravelHyperf\Support\Facades\Blade;
 use Money\Money;
 
 /**
@@ -1588,7 +1622,7 @@ Cost: {{ $money }}
 Programming a custom directive is sometimes more complex than necessary when defining simple, custom conditional statements. For that reason, Blade provides a `Blade::if` method which allows you to quickly define custom conditional directives using closures. For example, let's define a custom conditional that checks the configured default "disk" for the application. We may do this in the `boot` method of our `AppServiceProvider`:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Blade;
+use LaravelHyperf\Support\Facades\Blade;
 
 /**
  * Bootstrap any application services.

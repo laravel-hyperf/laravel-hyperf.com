@@ -46,7 +46,7 @@ Route::get('/user/{id}', [UserController::class, 'show']);
 When an incoming request matches the specified route URI, the `show` method on the `App\Http\Controllers\UserController` class will be invoked and the route parameters will be passed to the method.
 
 ::: note
-Controllers are not **required** to extend a base class.
+Controllers are not **required** to extend a base class. However, it is sometimes convenient to extend a base controller class that contains methods that should be shared across all of your controllers.
 :::
 
 ### Single Action Controllers
@@ -80,7 +80,7 @@ Route::post('/server', ProvisionServer::class);
 
 ## Controller Middleware
 
-[Middleware](/docs/middleware.html) may be assigned to the controller's routes in your route files:
+[Middleware](/docs/middleware) may be assigned to the controller's routes in your route files:
 
 ```php
 Route::get('profile', [UserController::class, 'show'], ['middleware' => 'auth']);
@@ -90,7 +90,7 @@ Route::get('profile', [UserController::class, 'show'], ['middleware' => 'auth'])
 
 #### Constructor Injection
 
-The Laravel [service container](/docs/container.html) is used to resolve all Laravel Hyperf controllers. As a result, you are able to type-hint any dependencies your controller may need in its constructor. The declared dependencies will automatically be resolved and injected into the controller instance:
+The Laravel Hyperf [service container](/docs/container) is used to resolve all Laravel Hyperf controllers. As a result, you are able to type-hint any dependencies your controller may need in its constructor. The declared dependencies will automatically be resolved and injected into the controller instance:
 
 ```php
 <?php
@@ -112,21 +112,21 @@ class UserController extends Controller
 
 #### Method Injection
 
-In addition to constructor injection, you may also type-hint dependencies on your controller's methods. A common use-case for method injection is injecting the `SwooleTW\Hyperf\Http\Request` instance into your controller methods:
+In addition to constructor injection, you may also type-hint dependencies on your controller's methods. A common use-case for method injection is injecting the `LaravelHyperf\Http\Request` instance into your controller methods:
 
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
-use SwooleTW\Hyperf\Http\Request;
+use LaravelHyperf\Http\Request;
 
 class UserController extends Controller
 {
     /**
      * Store a new user.
      */
-    public function store(Request $request)
+    public function store(Request $request): array
     {
         $name = $request->name;
 
@@ -145,25 +145,40 @@ use App\Http\Controllers\UserController;
 Route::put('/user/{id}', [UserController::class, 'update']);
 ```
 
-You may still type-hint the `SwooleTW\Hyperf\Http\Request` and access your `id` parameter by defining your controller method as follows:
+You may still type-hint the `LaravelHyperf\Http\Request` and access your `id` parameter by defining your controller method as follows:
 
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
-use SwooleTW\Hyperf\Http\Request;
+use LaravelHyperf\Http\Request;
 
 class UserController extends Controller
 {
     /**
      * Update the given user.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): array
     {
         // Update the user...
 
         return ['success' => true];
     }
+}
+```
+
+## Proxying Controller Methods
+
+Sometimes you may want to execute some logics before calling controller actions or redefine the action target. You can define `callAction` method in your controller:
+
+```php
+public function callAction(string $action, array $parameters)
+{
+    if ($oldMethod = $this->oldVersionMethod('action')) {
+        return $this->{$oldMethod}($parameters);
+    }
+
+    return $this->{$action}($parameters);
 }
 ```

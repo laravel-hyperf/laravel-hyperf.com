@@ -3,25 +3,23 @@
 
 ## Introduction
 
-When you're ready to deploy your Laravel application to production, there are some important things you can do to make sure your application is running as efficiently as possible. In this document, we'll cover some great starting points for making sure your Laravel Hyperf application is deployed properly.
+When you're ready to deploy your Laravel Hyperf application to production, there are some important things you can do to make sure your application is running as efficiently as possible. In this document, we'll cover some great starting points for making sure your Laravel Hyperf application is deployed properly.
 
 ## Server Requirements
 
 The Laravel Hyperf framework has a few system requirements. You should ensure that your web server has the following minimum PHP version and extensions:
 
- - PHP >= 8.1
- - Any of the following network engines
-   - [Swoole PHP extension](https://github.com/swoole/swoole-src) >= 5.0
-   - [Swow PHP extension](https://github.com/swow/swow) >= 1.4
+ - PHP >= 8.2
+ - [Swoole PHP extension](https://github.com/swoole/swoole-src) >= 5.1
  - JSON PHP extension
- - Pcntl PHP extension (Only on Swoole engine)
+ - PDO PHP extension
+ - Pcntl PHP extension
+ - Session extension (If you need to use session)
  - OpenSSL PHP extension (If you need to use the HTTPS)
- - PDO PHP extension (If you need to use the MySQL Client)
  - Redis PHP extension (If you need to use the Redis Client)
- - Protobuf PHP extension (If you need to use the gRPC Server or Client)
 
-::: note
-If you've installed `hyperf/polyfill-coroutine` package, you must set `swoole.use_shortname` to `Off` in your `php.ini` file.
+::: warning
+You should set `swoole.use_shortname` to `Off` in your `php.ini` file if you plan to use global coroutine helpers such as `go`, `co` and `defer`.
 :::
 
 ### Docker
@@ -35,18 +33,11 @@ If you plan to deploy your application via docker, you can find various Dockerfi
 If you are deploying your application to a server that is running Nginx, you may use the following configuration file as a starting point for configuring your web server. Most likely, this file will need to be customized depending on your server's configuration.
 
 ```nginx
-# At least one Hyperf node is required, multiple configuration lines
-upstream hyperf {
-    # IP and port of Hyperf HTTP Server
-    server 127.0.0.1:9501;
-    server 127.0.0.1:9502;
-}
-
 server {
     # listening port
     listen 80;
     # Bound domain name, fill in your domain name
-    server_name proxy.hyperf.io;
+    server_name proxy.laravel-hyperf.com;
 
     location / {
         # Forward the client's Host and IP information to the corresponding node
@@ -58,7 +49,7 @@ server {
         proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
 
         # Execute proxy access to real server
-        proxy_pass http://hyperf;
+        proxy_pass http://127.0.0.1:9501;
     }
 }
 ```
@@ -68,18 +59,9 @@ server {
 If you plan to proxy your websocket services, you may use the following configuration file.
 
 ```nginx
-# At least one Hyperf node is required, multiple configuration lines
-upstream hyperf_websocket {
-    # Set the load balancing mode to IP Hash algorithm mode, so that each request from different clients will interact with the same node
-    ip_hash;
-    # IP and port of Hyperf WebSocket Server
-    server 127.0.0.1:9503;
-    server 127.0.0.1:9504;
-}
-
 server {
     listen 80;
-    server_name websocket.hyperf.io;
+    server_name websocket.laravel-hyperf.com;
 
     location / {
         # WebSocket Header
@@ -96,7 +78,7 @@ server {
         proxy_read_timeout 60s ;
 
         # Execute proxy access to real server
-        proxy_pass http://hyperf_websocket;
+        proxy_pass http://127.0.0.1:9502;
     }
 }
 ```

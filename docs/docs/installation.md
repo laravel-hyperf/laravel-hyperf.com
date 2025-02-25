@@ -9,6 +9,15 @@ Before creating your first Laravel Hyperf project, make sure that your local mac
 pecl install swoole
 ```
 
+For Mac users, you can also install Swoole via brew:
+
+```shell:no-line-numbers
+brew tap shivammathur/extensions
+brew install shivammathur/extensions/swoole@8.3
+```
+
+> Using `shivammathur/extensions` can help you solve common issues while installing swoole on Apple M1 environments. Please substitute the PHP version with the end of extension formula.
+
 ::: info
 You can also use [Box](https://hyperf.wiki/3.1/#/en/eco/box.md) as your runtime environment.
 :::
@@ -16,15 +25,8 @@ You can also use [Box](https://hyperf.wiki/3.1/#/en/eco/box.md) as your runtime 
 After you have installed PHP, Composer and Swoole extension, you may create a new Laravel Hyperf project via Composer's `create-project` command:
 
 ```shell:no-line-numbers
-composer create-project swooletw/laravel-hyperf example-app
+composer create-project laravel-hyperf/laravel-hyperf example-app
 ```
-
-::: note
-Laravel Hyperf is currently under development and there's no released version yet. You can try the latest version of Laravel Hyperf by using the `master` branch.
-```shell:no-line-numbers
-composer create-project swooletw/laravel-hyperf example-laravel-hyperf dev-master
-```
-:::
 
 Once the project has been created, start Laravel Hyperf's local development server using serve command:
 
@@ -37,17 +39,8 @@ php artisan serve
 Because all the files will be kept in the memory after running, you need to restart server after you make file changes. In development, you can use hot reload command:
 
 ```shell:no-line-numbers
-php artisan server:watch
+php artisan watch
 ```
-::: tip
-Laravel Hyperf provides `artisan` as an alias for the command entry point. You can use `php artisan {command}` to execute your commands, just like in Laravel.
-
-For example, to start the server, you can run:
-
-```shell:no-line-numbers
-php artisan serve
-```
-:::
 
 Once you have started the HTTP server, your application will be accessible in your web browser at [http://localhost:9501](http://localhost:9501). Next, you're ready to start taking your next steps into Laravel Hyperf.
 
@@ -96,7 +89,7 @@ php artisan migrate
 
 ## Developing with Docker
 
-If your environment doesn't meet Hyperf's requirements or you're unfamiliar with system configuration, you can develop your Hyperf project using Docker:
+If your environment doesn't meet Laravel Hyperf's requirements or you're unfamiliar with system configuration, you can develop your Laravel Hyperf project using Docker:
 
 - Run Container
 
@@ -107,7 +100,7 @@ If the `selinux-enabled` option is enabled when docker starts, access to host re
 :::
 
 ```shell:no-line-numbers
-docker run --name hyperf \
+docker run --name laravel-hyperf \
 -v /workspace/laravel-hyperf:/data/project \
 -p 9501:9501 -it \
 --privileged -u root \
@@ -121,7 +114,7 @@ If docker's selinux-enabled option is on, add `--privileged -u root` to the comm
 
 ## Incompatible extensions
 
-Because Hyperf is based on Swoole's unprecedented coroutine functionality many extensions are incompatible, the following (including but not limited to) extensions are currently incompatible:
+Because Laravel Hyperf is based on Swoole's coroutine functionality, some extensions are incompatible in the coroutine environment. The following (including but not limited to) extensions are currently incompatible:
 
 - xhprof
 - xdebug (It's available in PHP 8.1+ and Swoole >= 5.0.2)

@@ -71,6 +71,10 @@ export const sidebarConfig = ({
                             link: 'middleware',
                         },
                         {
+                            text: 'CSRF Protection',
+                            link: 'csrf',
+                        },
+                        {
                             text: 'Controllers',
                             link: 'controllers',
                         },
@@ -119,6 +123,10 @@ export const sidebarConfig = ({
                         {
                             text: 'Artisan Console',
                             link: 'artisan',
+                        },
+                        {
+                            text: 'Broadcasting',
+                            link: 'broadcasting',
                         },
                         {
                             text: 'Cache',

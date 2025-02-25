@@ -11,7 +11,7 @@ import { seoPlugin } from '@vuepress/plugin-seo'
 export default defineUserConfig({
   lang: 'en-US',
   title: 'Laravel Hyperf',
-  description: 'The Laravel-Style Hyperf Framework for Web Artisans.',
+  description: 'A Laravel-Style PHP Framework for Web Artisans.',
 
   ignoreDeadLinks: true,
   bundler: viteBundler(),
@@ -22,8 +22,8 @@ export default defineUserConfig({
       fallBackImage: '/icon.png',
       ogp: (ogp, page) => ({
         ...ogp,
-        'og:title': 'Laravel Hyperf - The Laravel Style Hyperf Framework For Web Artisans',
-        'og:description': "Laravel Hyperf is a PHP framework which aims to help Laravel artisans enjoy the high performance of Hyperf while maintaining familiar Laravel development practices.",
+        'og:title': 'Laravel Hyperf - A Laravel-Style PHP Framework For Web Artisans',
+        'og:description': "Laravel Hyperf is a Laravel-style framework with native coroutine support for ultra-high performance.",
       }),
     }),
     removeHtmlExtensionPlugin(),
@@ -50,9 +50,9 @@ export default defineUserConfig({
   theme: defaultTheme({
     logo: 'icon.svg',
 
-    docsRepo: 'swooletw/laravel-hyperf.com',
+    docsRepo: 'laravel-hyperf/laravel-hyperf.com',
 
-    docsBranch: 'master',
+    docsBranch: 'master/docs',
 
     navbar: [
       '/',
@@ -62,7 +62,7 @@ export default defineUserConfig({
       },
       {
         text: 'GitHub',
-        link: 'https://github.com/swooletw/laravel-hyperf',
+        link: 'https://github.com/laravel-hyperf/laravel-hyperf',
       }
     ],
 

@@ -7,13 +7,13 @@ To help you learn more about what's happening within your application, Laravel H
 
 Laravel Hyperf's logging is based on "channels". Each channel represents a specific way of writing log information. For example, the `single` channel writes log files to a single log file, while the `slack` channel sends log messages to Slack. Log messages may be written to multiple channels based on their severity.
 
-Under the hood, Laravel Hyperf utilizes the [Monolog](https://github.com/Seldaek/monolog) library, which provides support for a variety of powerful log handlers. Laravel makes it a cinch to configure these handlers, allowing you to mix and match them to customize your application's log handling.
+Under the hood, Laravel Hyperf utilizes the [Monolog](https://github.com/Seldaek/monolog) library, which provides support for a variety of powerful log handlers. Laravel Hyperf makes it a cinch to configure these handlers, allowing you to mix and match them to customize your application's log handling.
 
 ## Configuration
 
 All of the configuration options for your application's logging behavior are housed in the `config/logging.php` configuration file. This file allows you to configure your application's log channels, so be sure to review each of the available channels and their options. We'll review a few common options below.
 
-By default, Laravel will use the `stack` channel when logging messages. The `stack` channel is used to aggregate multiple log channels into a single channel. For more information on building stacks, check out the [documentation below](#building-log-stacks).
+By default, Laravel Hyperf will use the `stack` channel when logging messages. The `stack` channel is used to aggregate multiple log channels into a single channel. For more information on building stacks, check out the [documentation below](#building-log-stacks).
 
 #### Configuring the Channel Name
 
@@ -29,7 +29,7 @@ By default, Monolog is instantiated with a "channel name" that matches the curre
 
 ### Available Channel Drivers
 
-Each log channel is powered by a "driver". The driver determines how and where the log message is actually recorded. The following log channel drivers are available in every Laravel application. An entry for most of these drivers is already present in your application's `config/logging.php` configuration file, so be sure to review this file to become familiar with its contents:
+Each log channel is powered by a "driver". The driver determines how and where the log message is actually recorded. The following log channel drivers are available in every Laravel Hyperf application. An entry for most of these drivers is already present in your application's `config/logging.php` configuration file, so be sure to review this file to become familiar with its contents:
 
 <div class="overflow-auto">
 
@@ -129,7 +129,7 @@ As mentioned previously, the `stack` driver allows you to combine multiple chann
     'slack' => [
         'driver' => 'slack',
         'url' => env('LOG_SLACK_WEBHOOK_URL'),
-        'username' => 'Laravel Log',
+        'username' => 'Laravel Hyperf Log',
         'emoji' => ':boom:',
         'level' => 'critical',
     ],
@@ -140,7 +140,7 @@ Let's dissect this configuration. First, notice our `stack` channel aggregates t
 
 #### Log Levels
 
-Take note of the `level` configuration option present on the `syslog` and `slack` channel configurations in the example above. This option determines the minimum "level" a message must be in order to be logged by the channel. Monolog, which powers Laravel's logging services, offers all of the log levels defined in the [RFC 5424 specification](https://tools.ietf.org/html/rfc5424). In descending order of severity, these log levels are: **emergency**, **alert**, **critical**, **error**, **warning**, **notice**, **info**, and **debug**.
+Take note of the `level` configuration option present on the `syslog` and `slack` channel configurations in the example above. This option determines the minimum "level" a message must be in order to be logged by the channel. Monolog, which powers Laravel Hyperf's logging services, offers all of the log levels defined in the [RFC 5424 specification](https://tools.ietf.org/html/rfc5424). In descending order of severity, these log levels are: **emergency**, **alert**, **critical**, **error**, **warning**, **notice**, **info**, and **debug**.
 
 So, imagine we log a message using the `debug` method:
 
@@ -159,7 +159,7 @@ Log::emergency('The system is down!');
 You may write information to the logs using the `Log` [facade](/docs/facades). As previously mentioned, the logger provides the eight logging levels defined in the [RFC 5424 specification](https://tools.ietf.org/html/rfc5424): **emergency**, **alert**, **critical**, **error**, **warning**, **notice**, **info** and **debug**:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Log;
+use LaravelHyperf\Support\Facades\Log;
 
 Log::emergency($message);
 Log::alert($message);
@@ -181,7 +181,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Hyperf\ViewEngine\Contract\ViewInterface;
-use SwooleTW\Hyperf\Support\Facades\Log;
+use LaravelHyperf\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -204,7 +204,7 @@ class UserController extends Controller
 An array of contextual data may be passed to the log methods. This contextual data will be formatted and displayed with the log message:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Log;
+use LaravelHyperf\Support\Facades\Log;
 
 Log::info('User {id} failed to login.', ['id' => $user->id]);
 ```
@@ -217,9 +217,9 @@ Occasionally, you may wish to specify some contextual information that should be
 namespace App\Http\Middleware;
 
 use Closure;
-use SwooleTW\Hyperf\Http\Request;
-use SwooleTW\Hyperf\Support\Facades\Log;
-use Hyperf\Stringable\Str;
+use LaravelHyperf\Http\Request;
+use LaravelHyperf\Support\Facades\Log;
+use LaravelHyperf\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 
 class AssignRequestId
@@ -227,7 +227,7 @@ class AssignRequestId
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\SwooleTW\Hyperf\Http\Request): (\Psr\Http\Message\ResponseInterface)  $next
+     * @param  \Closure(\LaravelHyperf\Http\Request): (\Psr\Http\Message\ResponseInterface)  $next
      */
     public function handle(Request $request, Closure $next): ResponseInterface
     {
@@ -254,9 +254,9 @@ If you would like to share contextual information across _all_ logging channels,
 namespace App\Http\Middleware;
 
 use Closure;
-use SwooleTW\Hyperf\Http\Request;
-use SwooleTW\Hyperf\Support\Facades\Log;
-use Hyperf\Stringable\Str;
+use LaravelHyperf\Http\Request;
+use LaravelHyperf\Support\Facades\Log;
+use LaravelHyperf\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 
 class AssignRequestId
@@ -264,7 +264,7 @@ class AssignRequestId
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\SwooleTW\Hyperf\Http\Request): (\Psr\Http\Message\ResponseInterface)  $next
+     * @param  \Closure(\LaravelHyperf\Http\Request): (\Psr\Http\Message\ResponseInterface)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -288,7 +288,7 @@ If you need to share log context while processing queued jobs, you may utilize [
 Sometimes you may wish to log a message to a channel other than your application's default channel. You may use the `channel` method on the `Log` facade to retrieve and log to any channel defined in your configuration file:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Log;
+use LaravelHyperf\Support\Facades\Log;
 
 Log::channel('slack')->info('Something happened!');
 ```
@@ -304,7 +304,7 @@ Log::stack(['single', 'slack'])->info('Something happened!');
 It is also possible to create an on-demand channel by providing the configuration at runtime without that configuration being present in your application's `logging` configuration file. To accomplish this, you may pass a configuration array to the `Log` facade's `build` method:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Log;
+use LaravelHyperf\Support\Facades\Log;
 
 Log::build([
     'driver' => 'single',
@@ -315,7 +315,7 @@ Log::build([
 You may also wish to include an on-demand channel in an on-demand logging stack. This can be achieved by including your on-demand channel instance in the array passed to the `stack` method:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Log;
+use LaravelHyperf\Support\Facades\Log;
 
 $channel = Log::build([
     'driver' => 'single',
@@ -329,7 +329,7 @@ Log::stack(['slack', $channel])->info('Something happened!');
 
 ### Customizing Monolog for Channels
 
-Sometimes you may need complete control over how Monolog is configured for an existing channel. For example, you may want to configure a custom Monolog `FormatterInterface` implementation for Laravel's built-in `single` channel.
+Sometimes you may need complete control over how Monolog is configured for an existing channel. For example, you may want to configure a custom Monolog `FormatterInterface` implementation for Laravel Hyperf's built-in `single` channel.
 
 To get started, define a `tap` array on the channel's configuration. The `tap` array should contain a list of classes that should have an opportunity to customize (or "tap" into) the Monolog instance after it is created. There is no conventional location where these classes should be placed, so you are free to create a directory within your application to contain these classes:
 
@@ -337,19 +337,19 @@ To get started, define a `tap` array on the channel's configuration. The `tap` a
 'single' => [
     'driver' => 'single',
     'tap' => [App\Logging\CustomizeFormatter::class],
-    'path' => storage_path('logs/laravel.log'),
+    'path' => storage_path('logs/laravel-hyperf.log'),
     'level' => 'debug',
 ],
 ```
 
-Once you have configured the `tap` option on your channel, you're ready to define the class that will customize your Monolog instance. This class only needs a single method: `__invoke`, which receives an `SwooleTW\Hyperf\Log\Logger` instance. The `SwooleTW\Hyperf\Log\Logger` instance proxies all method calls to the underlying Monolog instance:
+Once you have configured the `tap` option on your channel, you're ready to define the class that will customize your Monolog instance. This class only needs a single method: `__invoke`, which receives an `LaravelHyperf\Log\Logger` instance. The `LaravelHyperf\Log\Logger` instance proxies all method calls to the underlying Monolog instance:
 
 ```php
 <?php
 
 namespace App\Logging;
 
-use SwooleTW\Hyperf\Log\Logger;
+use LaravelHyperf\Log\Logger;
 use Monolog\Formatter\LineFormatter;
 
 class CustomizeFormatter
@@ -374,7 +374,7 @@ All of your "tap" classes are resolved by the [service container](/docs/containe
 
 ### Creating Monolog Handler Channels
 
-Monolog has a variety of [available handlers](https://github.com/Seldaek/monolog/tree/main/src/Monolog/Handler) and Laravel does not include a built-in channel for each one. In some cases, you may wish to create a custom channel that is merely an instance of a specific Monolog handler that does not have a corresponding Laravel log driver.  These channels can be easily created using the `monolog` driver.
+Monolog has a variety of [available handlers](https://github.com/Seldaek/monolog/tree/main/src/Monolog/Handler) and Laravel Hyperf does not include a built-in channel for each one. In some cases, you may wish to create a custom channel that is merely an instance of a specific Monolog handler that does not have a corresponding Laravel Hyperf log driver.  These channels can be easily created using the `monolog` driver.
 
 When using the `monolog` driver, the `handler` configuration option is used to specify which handler will be instantiated. Optionally, any constructor parameters the handler needs may be specified using the `with` configuration option:
 

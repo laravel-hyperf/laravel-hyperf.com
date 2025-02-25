@@ -5,11 +5,7 @@
 
 Since HTTP driven applications are stateless, sessions provide a way to store information about the user across multiple requests. That user information is typically placed in a persistent store / backend that can be accessed from subsequent requests.
 
-Laravel Hyperf ships with a variety of session backends that are accessed through an expressive, unified API. Currently it only supports `file`, `database` and `redis` driver.
-
-::: note
-Session is provided by [hyperf/session](https://github.com/hyperf/session) package. Some methods are different from Laravel's session implementation.
-:::
+Laravel Hyperf ships with a variety of session backends that are accessed through an expressive, unified API. Support for popular backends such as [Redis](https://redis.io), file, and databases is included.
 
 ### Configuration
 
@@ -22,12 +18,18 @@ It's recommended to use `redis` as the session driver if possible, it will have 
 The session `driver` configuration option defines where session data will be stored for each request. Laravel Hyperf ships with some great drivers out of the box:
 
 - `file` - sessions are stored in `storage/framework/sessions`.
+- `cookie` - sessions are stored in secure cookies.
 - `database` - sessions are stored in a relational database.
 - `redis` - sessions are stored in redis, a fast and cache based store.
+- `array` - sessions are stored in a PHP array and will not be persisted.
 
 ::: important
-Before using session, you need to enable the `Hyperf\Session\Middleware\SessionMiddleware` middleware in `Kernel.php`.
+Before using session, you need to enable the `LaravelHyperf\Session\Middleware\StartSession` middleware in `Kernel.php`.
 :::
+
+::: tips
+The array driver is primarily used during [testing](/docs/testing) and prevents the data stored in the session from being persisted.
+```
 
 ### Driver Prerequisites
 
@@ -37,11 +39,14 @@ When using the `database` session driver, you will need to create a table to con
 
 ```php
 use Hyperf\Database\Schema\Blueprint;
-use Hyperf\Database\Schema\Schema;
+use LaravelHyperf\Support\Facades\Schema;
 
 Schema::create('sessions', function (Blueprint $table) {
     $table->string('id')->primary();
-    $table->text('payload');
+    $table->foreignId('user_id')->nullable()->index();
+    $table->string('ip_address', 45)->nullable();
+    $table->text('user_agent')->nullable();
+    $table->longText('payload');
     $table->integer('last_activity')->index();
 });
 ```
@@ -73,7 +78,7 @@ There are two primary ways of working with session data in Laravel Hyperf: the g
 
 namespace App\Http\Controllers;
 
-use SwooleTW\Hyperf\Http\Request;
+use LaravelHyperf\Http\Request;
 use Hyperf\ViewEngine\Contract\ViewInterface;
 
 class UserController extends Controller
@@ -121,8 +126,8 @@ Route::get('/home', function () {
 });
 ```
 
-::: note
-There is little practical difference between using the session via an HTTP request instance versus using the global `session` helper.
+::: tips
+There is little practical difference between using the session via an HTTP request instance versus using the global `session` helper. Both methods are [testable](/docs/testing) via the `assertSessionHas` method which is available in all of your test cases.
 :::
 
 #### Retrieving All Session Data
@@ -131,6 +136,16 @@ If you would like to retrieve all the data in the session, you may use the `all`
 
 ```php
 $data = $request->session()->all();
+```
+
+#### Retrieving a Portion of the Session Data
+
+The `only` and `except` methods may be used to retrieve a subset of the session data:
+
+```php
+$data = $request->session()->only(['username', 'email']);
+
+$data = $request->session()->except(['username', 'email']);
 ```
 
 #### Determining if an Item Exists in the Session
@@ -147,6 +162,14 @@ To determine if an item is present in the session, even if its value is `null`, 
 
 ```php
 if ($request->session()->exists('users')) {
+    // ...
+}
+```
+
+To determine if an item is not present in the session, you may use the `missing` method. The `missing` method returns true if the item is not present:
+
+```php
+if ($request->session()->missing('users')) {
     // ...
 }
 ```
@@ -176,7 +199,21 @@ $request->session()->push('user.teams', 'developers');
 The `remove` method will retrieve and delete an item from the session in a single statement:
 
 ```php
-$value = $request->session()->remove('key');
+$value = $request->session()->pull('key', 'default');
+```
+
+#### Incrementing and Decrementing Session Values
+
+If your session data contains an integer you wish to increment or decrement, you may use the `increment` and `decrement` methods:
+
+```php
+$request->session()->increment('count');
+
+$request->session()->increment('count', $incrementBy = 2);
+
+$request->session()->decrement('count');
+
+$request->session()->decrement('count', $decrementBy = 2);
 ```
 
 ### Flash Data
@@ -215,28 +252,13 @@ $request->session()->forget(['name', 'status']);
 $request->session()->flush();
 ```
 
-### Getting the current Session ID
+### Regenerating the Session ID
 
-The `getId` method will return the ID of the current session:
+Regenerating the session ID is often done in order to prevent malicious users from exploiting a [session fixation](https://owasp.org/www-community/attacks/Session_fixation) attack on your application.
 
-```php
-$id = $request->session()->getId();
-```
-
-### Clearing the Session
-
-The `clear` method will clear all data from the session:
+If you need to manually regenerate the session ID, you may use the `regenerate` method:
 
 ```php
-$request->session()->clear();
-```
-
-### Regenerating the CSRF Token
-
-You can get the CSRF token using the `token` method, and regenerate it using the `regenerateToken` method:
-
-```php
-$request->session()->token();
 $request->session()->regenerate();
 ```
 
@@ -246,11 +268,43 @@ If you need to regenerate the session ID and remove all data from the session in
 $request->session()->invalidate();
 ```
 
+## Session Blocking
+
+::: warning
+To utilize session blocking, your application must be using a cache driver that supports [atomic locks](/docs/atomic-locks). Currently, those cache drivers include the `redis`, `database`, `file`, and `array` drivers. In addition, you may not use the `cookie` session driver.
+:::
+
+By default, Laravel Hyperf allows requests using the same session to execute concurrently. So, for example, if you use a JavaScript HTTP library to make two HTTP requests to your application, they will both execute at the same time. For many applications, this is not a problem; however, session data loss can occur in a small subset of applications that make concurrent requests to two different application endpoints which both write data to the session.
+
+To mitigate this, Laravel Hyperf provides functionality that allows you to limit concurrent requests for a given session. To get started, you may simply set the `block` option onto your route definition. In this example, an incoming request to the `/profile` endpoint would acquire a session lock. While this lock is being held, any incoming requests to the `/profile` or `/order` endpoints which share the same session ID will wait for the first request to finish executing before continuing their execution:
+
+```php
+Route::post('/profile', function () {
+    // ...
+}, ['block' => ['lock' => 10, 'wait' => 10]]);
+
+Route::post('/order', function () {
+    // ...
+}, ['block' => ['lock' => 10, 'wait' => 10]]);
+```
+
+The `block` option accepts two optional configs. The `lock` config accepted by the `block` method is the maximum number of seconds the session lock should be held for before it is released. Of course, if the request finishes executing before this time the lock will be released earlier.
+
+The `wait` config accepted by the `block` method is the number of seconds a request should wait while attempting to obtain a session lock. An `LaravelHyperf\Cache\Exceptions` will be thrown if the request is unable to obtain a session lock within the given number of seconds.
+
+If neither of these arguments is passed, the lock will be obtained for a maximum of 10 seconds and requests will wait a maximum of 10 seconds while attempting to obtain a lock:
+
+```php
+Route::post('/profile', function () {
+    // ...
+}, ['block' => true]);
+```
+
 ## Adding Custom Session Drivers
 
 ### Implementing the Driver
 
-If none of the existing session drivers fit your application's needs, Laravel Hyperf makes it possible to write your own session handler. Your custom session driver should implement PHP's built-in `SessionHandlerInterface`. This interface contains just a few simple methods. A stubbed MongoDB implementation looks like the following:
+If none of the existing session drivers fit your application's needs, Laravel makes it possible to write your own session handler. Your custom session driver should implement PHP's built-in `SessionHandlerInterface`. This interface contains just a few simple methods. A stubbed MongoDB implementation looks like the following:
 
 ```php
 <?php
@@ -268,26 +322,52 @@ class MongoSessionHandler implements \SessionHandlerInterface
 }
 ```
 
-::: note
+::: tip
 Laravel Hyperf does not ship with a directory to contain your extensions. You are free to place them anywhere you like. In this example, we have created an `Extensions` directory to house the `MongoSessionHandler`.
 :::
 
 Since the purpose of these methods is not readily understandable, let's quickly cover what each of the methods do:
 
-- The `open` method would typically be used in file based session store systems. Since Laravel ships with a `file` session driver, you will rarely need to put anything in this method. You can simply leave this method empty.
-- The `close` method, like the `open` method, can also usually be disregarded. For most drivers, it is not needed.
-- The `read` method should return the string version of the session data associated with the given `$sessionId`. There is no need to do any serialization or other encoding when retrieving or storing session data in your driver, as Laravel will perform the serialization for you.
-- The `write` method should write the given `$data` string associated with the `$sessionId` to some persistent storage system, such as MongoDB or another storage system of your choice.  Again, you should not perform any serialization - Laravel Hyperf will have already handled that for you.
-- The `destroy` method should remove the data associated with the `$sessionId` from persistent storage.
-- The `gc` method should destroy all session data that is older than the given `$lifetime`, which is a UNIX timestamp. For self-expiring systems like Memcached and Redis, this method may be left empty.
+* The `open` method would typically be used in file based session store systems. Since Laravel Hyperf ships with a `file` session driver, you will rarely need to put anything in this method. You can simply leave this method empty.
+* The `close` method, like the `open` method, can also usually be disregarded. For most drivers, it is not needed.
+* The `read` method should return the string version of the session data associated with the given `$sessionId`. There is no need to do any serialization or other encoding when retrieving or storing session data in your driver, as Laravel Hyperf will perform the serialization for you.
+* The `write` method should write the given `$data` string associated with the `$sessionId` to some persistent storage system, such as MongoDB or another storage system of your choice. Again, you should not perform any serialization - Laravel Hyperf will have already handled that for you.
+* The `destroy` method should remove the data associated with the `$sessionId` from persistent storage.
+* The `gc` method should destroy all session data that is older than the given `$lifetime`, which is a UNIX timestamp. For self-expiring systems like Redis, this method may be left empty.
 
 ### Registering the Driver
 
-Once your driver has been implemented, you are ready to configure it with Laravel Hyperf. You can add your driver to the `config/session.php` configuration file:
+Once your driver has been implemented, you are ready to register it with Laravel Hyperf. To add additional drivers to Laravel Hyperf's session backend, you may use the `extend` method provided by the `Session` [facade](/docs/facade). You should call the `extend` method from the `boot` method of a [service provider](/docs/providers). You may do this from the existing `App\Providers\AppServiceProvider` or create an entirely new provider:
 
 ```php
-return [
-    'handler' => App\Extensions\MongoSessionHandler::class,
-    // ...
-];
+<?php
+
+namespace App\Providers;
+
+use App\Extensions\MongoSessionHandler;
+use LaravelHyperf\Foundation\Contracts\Application;
+use LaravelHyperf\Support\Facades\Session;
+use LaravelHyperf\Support\ServiceProvider;
+
+class SessionServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        // ...
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        Session::extend('mongo', function (Application $app) {
+            // Return an implementation of SessionHandlerInterface...
+            return new MongoSessionHandler;
+        });
+    }
+}
 ```

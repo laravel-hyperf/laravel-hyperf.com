@@ -7,12 +7,16 @@ Some of the data retrieval or processing tasks performed by your application cou
 
 Thankfully, Laravel Hyperf provides an expressive, unified API for various cache backends, allowing you to take advantage of their blazing fast data retrieval and speed up your web application.
 
+::: tip
+Because Laravel Hyperf implements the same cache protocol as Laravel, you can share the cache and locks between the frameworks
+:::
+
 ## Configuration
 
 Your application's cache configuration file is located at `config/cache.php`. In this file, you may specify which cache driver you would like to be used by default throughout your application. Laravel Hyperf supports popular caching backends like [Redis](https://redis.io) and Swoole Table out of the box. In addition, a file based cache driver is available, while `array` and "null" cache drivers provide convenient cache backends for your automated tests.
 
 ::: note
-Laravel Hyperf does not support the `database` cache driver at this time.
+Laravel Hyperf does not support the `database` cache driver at this time. We don't encourage using database as a cache driver either because of the poor performance.
 :::
 
 The cache configuration file also contains various other options, which are documented within the file, so make sure to read over these options. By default, Laravel Hyperf is configured to use the `redis` cache driver, which stores the serialized, cached objects on the redis server. For larger applications, it is recommended that you keep using Redis. You may even configure multiple cache configurations for the same driver.
@@ -34,7 +38,7 @@ To obtain a cache store instance, you may use the `Cache` facade, which is what 
 
 namespace App\Http\Controllers;
 
-use SwooleTW\Hyperf\Support\Facades\Cache;
+use LaravelHyperf\Support\Facades\Cache;
 
 class UserController extends Controller
 {
@@ -231,7 +235,7 @@ cache(['key' => 'value'], $seconds);
 cache(['key' => 'value'], now()->addMinutes(10));
 ```
 
-When the `cache` function is called without any arguments, it returns an instance of the `SwooleTW\Hyperf\Cache\Contracts\Factory` implementation, allowing you to call other caching methods:
+When the `cache` function is called without any arguments, it returns an instance of the `LaravelHyperf\Cache\Contracts\Factory` implementation, allowing you to call other caching methods:
 
 ```php
 cache()->remember('users', $seconds, function () {
@@ -254,7 +258,7 @@ To utilize this feature, your application must be using the `redis`, `file`, or 
 Atomic locks allow for the manipulation of distributed locks without worrying about race conditions. You may create and manage locks using the `Cache::lock` method:
 
 ```php
-use SwooleTW\H\Support\Facades\Cache;
+use LaravelHyperf\Support\Facades\Cache;
 
 $lock = Cache::lock('foo', 10);
 
@@ -265,7 +269,7 @@ if ($lock->get()) {
 }
 ```
 
-The `get` method also accepts a closure. After the closure is executed, Laravel will automatically release the lock:
+The `get` method also accepts a closure. After the closure is executed, Laravel Hyperf will automatically release the lock:
 
 ```php
 Cache::lock('foo', 10)->get(function () {
@@ -273,10 +277,10 @@ Cache::lock('foo', 10)->get(function () {
 });
 ```
 
-If the lock is not available at the moment you request it, you may instruct Laravel to wait for a specified number of seconds. If the lock can not be acquired within the specified time limit, an `SwooleTW\Hyperf\Cache\Exceptions\LockTimeoutException` will be thrown:
+If the lock is not available at the moment you request it, you may instruct Laravel Hyperf to wait for a specified number of seconds. If the lock can not be acquired within the specified time limit, an `LaravelHyperf\Cache\Exceptions\LockTimeoutException` will be thrown:
 
 ```php
-use SwooleTW\Hyperf\Cache\Exceptions\LockTimeoutException;
+use LaravelHyperf\Cache\Exceptions\LockTimeoutException;
 
 $lock = Cache::lock('foo', 10);
 
@@ -291,7 +295,7 @@ try {
 }
 ```
 
-The example above may be simplified by passing a closure to the `block` method. When a closure is passed to this method, Laravel will attempt to acquire the lock for the specified number of seconds and will automatically release the lock once the closure has been executed:
+The example above may be simplified by passing a closure to the `block` method. When a closure is passed to this method, Laravel Hyperf will attempt to acquire the lock for the specified number of seconds and will automatically release the lock once the closure has been executed:
 
 ```php
 Cache::lock('foo', 10)->block(5, function () {
@@ -345,14 +349,14 @@ Cache::lock('processing')->forceRelease();
 
 ### Writing the Driver
 
-To create our custom cache driver, we first need to implement the `SwooleTW\Hyperf\Cache\Contracts\Store` [contract](/docs/contracts). So, a MongoDB cache implementation might look something like this:
+To create our custom cache driver, we first need to implement the `LaravelHyperf\Cache\Contracts\Store` [contract](/docs/contracts). So, a MongoDB cache implementation might look something like this:
 
 ```php
 <?php
 
 namespace App\Extensions;
 
-use SwooleTW\Hyperf\Cache\Contracts\Store;
+use LaravelHyperf\Cache\Contracts\Store;
 
 class MongoStore implements Store
 {
@@ -369,7 +373,7 @@ class MongoStore implements Store
 }
 ```
 
-We just need to implement each of these methods using a MongoDB connection. For an example of how to implement each of these methods, take a look at the `SwooleTW\Hyperf\Cache\RedisStore` in the [Laravel Hyperf framework source code](https://github.com/swooletw/hyperf-packages/blob/master/src/cache/src/RedisStore.php). Once our implementation is complete, we can finish our custom driver registration by calling the `Cache` facade's `extend` method:
+We just need to implement each of these methods using a MongoDB connection. For an example of how to implement each of these methods, take a look at the `LaravelHyperf\Cache\RedisStore` in the [Laravel Hyperf framework source code](https://github.com/laravel-hyperf/components/blob/master/src/cache/src/RedisStore.php). Once our implementation is complete, we can finish our custom driver registration by calling the `Cache` facade's `extend` method:
 
 ```php
 Cache::extend('mongo', function (Application $app) {
@@ -391,9 +395,9 @@ To register the custom cache driver with Laravel Hyperf, we will use the `extend
 namespace App\Providers;
 
 use App\Extensions\MongoStore;
-use SwooleTW\Hyperf\Foundation\Contracts\Application;
-use SwooleTW\Hyperf\Support\Facades\Cache;
-use SwooleTW\Hyperf\Support\ServiceProvider;
+use LaravelHyperf\Foundation\Contracts\Application;
+use LaravelHyperf\Support\Facades\Cache;
+use LaravelHyperf\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -419,7 +423,7 @@ class AppServiceProvider extends ServiceProvider
 }
 ```
 
-The first argument passed to the `extend` method is the name of the driver. This will correspond to your `driver` option in the `config/cache.php` configuration file. The second argument is a closure that should return an `SwooleTW\Hyperf\Cache\Repository` instance. The closure will be passed an `$app` instance, which is an instance of the [service container](/docs/container).
+The first argument passed to the `extend` method is the name of the driver. This will correspond to your `driver` option in the `config/cache.php` configuration file. The second argument is a closure that should return an `LaravelHyperf\Cache\Repository` instance. The closure will be passed an `$app` instance, which is an instance of the [service container](/docs/container).
 
 Once your extension is registered, update your `config/cache.php` configuration file's `driver` option to the name of your extension.
 
@@ -432,10 +436,10 @@ use App\Listeners\LogCacheHit;
 use App\Listeners\LogCacheMissed;
 use App\Listeners\LogKeyForgotten;
 use App\Listeners\LogKeyWritten;
-use SwooleTW\Hyperf\Cache\Events\CacheHit;
-use SwooleTW\Hyperf\Cache\Events\CacheMissed;
-use SwooleTW\Hyperf\Cache\Events\KeyForgotten;
-use SwooleTW\Hyperf\Cache\Events\KeyWritten;
+use LaravelHyperf\Cache\Events\CacheHit;
+use LaravelHyperf\Cache\Events\CacheMissed;
+use LaravelHyperf\Cache\Events\KeyForgotten;
+use LaravelHyperf\Cache\Events\KeyWritten;
 
 /**
  * The event listener mappings for the application.

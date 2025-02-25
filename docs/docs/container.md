@@ -1,4 +1,4 @@
-# Container
+# Service Container
 [[toc]]
 
 ## Introduction
@@ -17,7 +17,7 @@ Let's look at a simple example:
 namespace App\Http\Controllers;
 
 use App\Services\AppleMusic;
-use Hyperf\ViewEngine\View;;
+use Hyperf\ViewEngine\View;
 
 class PodcastController extends Controller
 {
@@ -81,10 +81,11 @@ Thankfully, many of the classes you will be writing when building a Laravel Hype
 
 ### When to Utilize the Container
 
-Thanks to zero configuration resolution, you will often type-hint dependencies on routes, controllers, event listeners, and elsewhere without ever manually interacting with the container. For example, you might type-hint the `Hyperf\HttpServer\Request` object on your route definition so that you can easily access the current request. Even though we never have to interact with the container to write this code, it is managing the injection of these dependencies behind the scenes:
+Thanks to zero configuration resolution, you will often type-hint dependencies on routes, controllers, event listeners, and elsewhere without ever manually interacting with the container. For example, you might type-hint the `LaravelHyperf\Http\Request` object on your route definition so that you can easily access the current request. Even though we never have to interact with the container to write this code, it is managing the injection of these dependencies behind the scenes:
 
 ```php
-use SwooleTW\Hyperf\Http\Request;
+use LaravelHyperf\Http\Request;
+use LaravelHyperf\Support\Facades\Route;
 
 Route::get('/', function (Request $request) {
     // ...
@@ -108,10 +109,10 @@ Within a service provider, you always have access to the container via the `$thi
 ```php
 use App\Services\Transistor;
 use App\Services\PodcastParser;
-use SwooleTW\Hyperf\Foundation\Contracts\Application;
+use LaravelHyperf\Foundation\Contracts\Application;
 
 $this->app->bind(Transistor::class, function (Application $app) {
-    return new Transistor($app->make(PodcastParser::class));
+    return new Transistor($app->get(PodcastParser::class));
 });
 ```
 
@@ -121,8 +122,8 @@ As mentioned, you will typically be interacting with the container within servic
 
 ```php
 use App\Services\Transistor;
-use SwooleTW\Hyperf\Foundation\Contracts\Application;
-use SwooleTW\Hyperf\Support\Facades\App;
+use LaravelHyperf\Foundation\Contracts\Application;
+use LaravelHyperf\Support\Facades\App;
 
 App::bind(Transistor::class, function (Application $app) {
     // ...
@@ -133,7 +134,7 @@ You may use the `bindIf` method to register a container binding only if a bindin
 
 ```php
 $this->app->bindIf(Transistor::class, function (Application $app) {
-    return new Transistor($app->make(PodcastParser::class));
+    return new Transistor($app->get(PodcastParser::class));
 });
 ```
 
@@ -165,7 +166,7 @@ use App\Services\RedisEventPusher;
 $this->app->bind(EventPusher::class, RedisEventPusher::class);
 ```
 
-This statement tells the container that it should inject the `RedisEventPusher` when a class needs an implementation of `EventPusher`. Now we can type-hint the `EventPusher` interface in the constructor of a class that is resolved by the container. Remember, controllers, event listeners, middleware, and various other types of classes within Laravel applications are always resolved using the container:
+This statement tells the container that it should inject the `RedisEventPusher` when a class needs an implementation of `EventPusher`. Now we can type-hint the `EventPusher` interface in the constructor of a class that is resolved by the container. Remember, controllers, event listeners, middleware, and various other types of classes within Laravel Hyper applications are always resolved using the container:
 
 ```php
 use App\Contracts\EventPusher;
@@ -234,17 +235,17 @@ If you are outside of a service provider in a location of your code that does no
 
 ```php
 use App\Services\Transistor;
-use SwooleTW\Hyperf\Support\Facades\App;
+use LaravelHyperf\Support\Facades\App;
 
 $transistor = App::make(Transistor::class);
 
 $transistor = app(Transistor::class);
 ```
 
-If you would like to have the Laravel Hyperf container instance itself injected into a class that is being resolved by the container, you may type-hint the `SwooleTW\Hyperf\Container\Contracts\Container` class on your class's constructor:
+If you would like to have the Laravel Hyperf container instance itself injected into a class that is being resolved by the container, you may type-hint the `LaravelHyperf\Container\Contracts\Container` class on your class's constructor:
 
 ```php
-use SwooleTW\Hyperf\Container\Contracts\Container;
+use LaravelHyperf\Container\Contracts\Container;
 
 /**
  * Create a new class instance.
@@ -261,10 +262,10 @@ You can get the container instance by this bindings:
 * `Psr\Container\ContainerInterface::class`
 * `Hyperf\Di\Container::class`
 * `Hyperf\Contract\ContainerInterface::class`
-* `SwooleTW\Hyperf\Container\Contracts\Container::class`
-* `SwooleTW\Hyperf\Container\Container::class`
-* `SwooleTW\Hyperf\Foundation\Contracts\Application::class`
-* `SwooleTW\Hyperf\Foundation\Application::class`
+* `LaravelHyperf\Container\Contracts\Container::class`
+* `LaravelHyperf\Container\Container::class`
+* `LaravelHyperf\Foundation\Contracts\Application::class`
+* `LaravelHyperf\Foundation\Application::class`
 :::
 
 ### Automatic Injection
@@ -290,8 +291,8 @@ class PodcastController extends Controller
     ) {}
 
     /**
-        * Show information about the given podcast.
-        */
+     * Show information about the given podcast.
+     */
     public function show(string $id): Podcast
     {
         return $this->apple->findPodcast($id);
@@ -328,7 +329,7 @@ You may invoke the `generate` method via the container like so:
 
 ```php
 use App\PodcastStats;
-use SwooleTW\Hyperf\Support\Facades\App;
+use LaravelHyperf\Support\Facades\App;
 
 $stats = App::call([new PodcastStats, 'generate']);
 ```
@@ -337,7 +338,7 @@ The `call` method accepts any PHP callable. The container's `call` method may ev
 
 ```php
 use App\Services\AppleMusic;
-use SwooleTW\Hyperf\Support\Facades\App;
+use LaravelHyperf\Support\Facades\App;
 
 $result = App::call(function (AppleMusic $apple) {
     // ...
@@ -350,7 +351,7 @@ The service container fires an event each time it resolves an object. You may li
 
 ```php
 use App\Services\Transistor;
-use SwooleTW\Hyperf\Foundation\Contracts\Application;
+use LaravelHyperf\Foundation\Contracts\Application;
 
 $this->app->resolving(Transistor::class, function (Transistor $transistor, Application $app) {
     // Called when container resolves objects of type "Transistor"...
@@ -365,7 +366,7 @@ As you can see, the object being resolved will be passed to the callback, allowi
 
 ## PSR-11
 
-Laravel Hyperf's service container implements the [PSR-11](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-11-container.md) interface. Therefore, you may type-hint the PSR-11 container interface to obtain an instance of the Laravel container:
+Laravel Hyperf's service container implements the [PSR-11](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-11-container.md) interface. Therefore, you may type-hint the PSR-11 container interface to obtain an instance of the Laravel Hyperf container:
 
 ```php
 use App\Services\Transistor;

@@ -49,7 +49,7 @@ Route::get('/', function () {
 Views may also be returned using the `View` facade:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\View;
+use LaravelHyperf\Support\Facades\View;
 
 return View::make('greeting', ['name' => 'James']);
 ```
@@ -73,9 +73,9 @@ View directory names should not contain the `.` character.
 Using the `View` facade's `first` method, you may create the first view that exists in a given array of views. This may be useful if your application or package allows views to be customized or overwritten:
 
 ```php
-    use SwooleTW\Hyperf\Support\Facades\View;
+use LaravelHyperf\Support\Facades\View;
 
-    return View::first(['custom.admin', 'admin'], $data);
+return View::first(['custom.admin', 'admin'], $data);
 ```
 
 <a name="determining-if-a-view-exists"></a>
@@ -84,7 +84,7 @@ Using the `View` facade's `first` method, you may create the first view that exi
 If you need to determine if a view exists, you may use the `View` facade. The `exists` method will return `true` if the view exists:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\View;
+use LaravelHyperf\Support\Facades\View;
 
 if (View::exists('admin.profile')) {
     // ...
@@ -118,7 +118,7 @@ Occasionally, you may need to share data with all views that are rendered by you
 
 namespace App\Providers;
 
-use SwooleTW\Hyperf\Support\Facades\View;
+use LaravelHyperf\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -146,7 +146,7 @@ View composers are callbacks or class methods that are called when a view is ren
 
 Typically, view composers will be registered within one of your application's [service providers](/docs/providers). In this example, we'll assume that we have created a new `App\Providers\ViewServiceProvider` to house this logic.
 
-We'll use the `View` facade's `composer` method to register the view composer. Laravel does not include a default directory for class based view composers, so you are free to organize them however you wish. For example, you could create an `app/View/Composers` directory to house all of your application's view composers:
+We'll use the `View` facade's `composer` method to register the view composer. Laravel Hyperf does not include a default directory for class based view composers, so you are free to organize them however you wish. For example, you could create an `app/View/Composers` directory to house all of your application's view composers:
 
 ```php
 <?php
@@ -154,8 +154,8 @@ We'll use the `View` facade's `composer` method to register the view composer. L
 namespace App\Providers;
 
 use App\View\Composers\ProfileComposer;
-use SwooleTW\Hyperf\Support\Facades;
-use SwooleTW\Hyperf\Support\Support\ServiceProvider;
+use LaravelHyperf\Support\Facades;
+use LaravelHyperf\Support\Support\ServiceProvider;
 use Hyperf\ViewEngine\View;
 
 class ViewServiceProvider extends ServiceProvider
@@ -229,7 +229,7 @@ You may attach a view composer to multiple views at once by passing an array of 
 
 ```php
 use App\Views\Composers\MultiComposer;
-use SwooleTW\Hyperf\Support\Facades\View;
+use LaravelHyperf\Support\Facades\View;
 
 View::composer(
     ['profile', 'dashboard'],
@@ -240,8 +240,8 @@ View::composer(
 The `composer` method also accepts the `*` character as a wildcard, allowing you to attach a composer to all views:
 
 ```php
-use SwooleTW\Hyperf\SupportFacades;
-use SwooleTW\Hyperf\Support\Facades\View;
+use LaravelHyperf\SupportFacades;
+use LaravelHyperf\Support\Facades\View;
 
 Facades\View::composer('*', function (View $view) {
     // ...
@@ -254,7 +254,7 @@ View "creators" are very similar to view composers; however, they are executed i
 
 ```php
 use App\View\Creators\ProfileCreator;
-use SwooleTW\Hyperf\Support\Facades\View;
+use LaravelHyperf\Support\Facades\View;
 
 View::creator('profile', ProfileCreator::class);
 ```

@@ -3,20 +3,20 @@
 
 ## Introduction
 
-Laravel Hyperf's `SwooleTW\Hyperf\Http\Request` class provides an object-oriented way to interact with the current HTTP request being handled by your application as well as retrieve the input, cookies, and files that were submitted with the request.
+Laravel Hyperf's `LaravelHyperf\Http\Request` class provides an object-oriented way to interact with the current HTTP request being handled by your application as well as retrieve the input, cookies, and files that were submitted with the request.
 
 ## Interacting With The Request
 
 ### Accessing the Request
 
-To obtain an instance of the current HTTP request via dependency injection, you should type-hint the `SwooleTW\Hyperf\Http\Request` class on your route closure or controller method. The incoming request instance will automatically be injected by the Laravel Hyperf [service container](/docs/container):
+To obtain an instance of the current HTTP request via dependency injection, you should type-hint the `LaravelHyperf\Http\Request` class on your route closure or controller method. The incoming request instance will automatically be injected by the Laravel Hyperf [service container](/docs/container):
 
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
-use SwooleTW\Hyperf\Http\Request;
+use LaravelHyperf\Http\Request;
 
 class UserController extends Controller
 {
@@ -34,15 +34,19 @@ class UserController extends Controller
 }
 ```
 
-As mentioned, you may also type-hint the `SwooleTW\Hyperf\Http\Request` class on a route closure. The service container will automatically inject the incoming request into the closure when it is executed:
+As mentioned, you may also type-hint the `LaravelHyperf\Http\Request` class on a route closure. The service container will automatically inject the incoming request into the closure when it is executed:
 
 ```php
-use SwooleTW\Hyperf\Http\Request;
+use LaravelHyperf\Http\Request;
 
 Route::get('/', function (Request $request) {
     // ...
 });
 ```
+
+::: info
+Remember everything injected by container is singleton? Then injecting `LaravelHyperf\Http\Request` is safe here? Yes,it is. Request itself is a proxy class which fetches the real request data from context.
+:::
 
 #### Dependency Injection and Route Parameters
 
@@ -54,14 +58,14 @@ use App\Http\Controllers\UserController;
 Route::put('/user/{id}', [UserController::class, 'update']);
 ```
 
-You may still type-hint the `SwooleTW\Hyperf\Http\Request` and access your `id` route parameter by defining your controller method as follows:
+You may still type-hint the `LaravelHyperf\Http\Request` and access your `id` route parameter by defining your controller method as follows:
 
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
-use SwooleTW\Hyperf\Http\Request;
+use LaravelHyperf\Http\Request;
 
 class UserController extends Controller
 {
@@ -79,10 +83,10 @@ class UserController extends Controller
 
 ### Request Path, Host, and Method
 
-The `SwooleTW\Hyperf\Http\Request` instance provides a variety of methods for examining the incoming HTTP request. We will discuss a few of the most important methods below.
+The `LaravelHyperf\Http\Request` instance provides a variety of methods for examining the incoming HTTP request. We will discuss a few of the most important methods below.
 
 ::: warning
-Unlike `Illuminate\Http\Request` in Laravel, `SwooleTW\Hyperf\Http\Request` doesn't extend `Symfony\Component\HttpFoundation\Request`. Some methods available in Laravel's Request object might not be present in Hyperf's implementation.
+Unlike `Illuminate\Http\Request` in Laravel, `LaravelHyperf\Http\Request` doesn't extend `Symfony\Component\HttpFoundation\Request`. Some methods available in Laravel's Request object might not be present in Laravel Hyperf's implementation.
 :::
 
 #### Retrieving the Request Path
@@ -149,7 +153,7 @@ if ($request->isMethod('post')) {
 
 ### Request Headers
 
-You may retrieve a request header from the `SwooleTW\Hyperf\Http\Request` instance using the `header` method. If the header is not present on the request, `null` will be returned. However, the `header` method accepts an optional second argument that will be returned if the header is not present on the request:
+You may retrieve a request header from the `LaravelHyperf\Http\Request` instance using the `header` method. If the header is not present on the request, `null` will be returned. However, the `header` method accepts an optional second argument that will be returned if the header is not present on the request:
 
 ```php
 $value = $request->header('X-Header-Name');
@@ -205,10 +209,10 @@ if ($request->expectsJson()) {
 
 The [PSR-7 standard](https://www.php-fig.org/psr/psr-7/) specifies interfaces for HTTP messages, including requests and responses. Requests and responses in Laravel Hyperf adhere to the PSR-7 standard by default.
 
-When injecting a request object, if it is declared as the PSR-7 standard interface `Psr\Http\Message\ServerRequestInterface`, Laravel Hyperf will automatically convert it to an equivalent `SwooleTW\Hyperf\Http\Request` object. This `SwooleTW\Hyperf\Http\Request` object implements the `Hyperf\HttpServer\Contract\RequestInterface`.
+When injecting a request object, if it is declared as the PSR-7 standard interface `Psr\Http\Message\ServerRequestInterface`, Laravel Hyperf will automatically convert it to an equivalent `LaravelHyperf\Http\Request` object. This `LaravelHyperf\Http\Request` object implements the `Hyperf\HttpServer\Contract\RequestInterface`.
 
 ::: tip
-You can use `SwooleTW\Hyperf\Http\Request` for injection so that you can get the IDE's auto-completion reminder support for exclusive methods.
+You can use `LaravelHyperf\Http\Request` for injection so that you can get the IDE's auto-completion reminder support for exclusive methods.
 :::
 
 ## Input
@@ -239,7 +243,7 @@ $request->collect('users')->each(function (string $user) {
 
 #### Retrieving an Input Value
 
-Using a few simple methods, you may access all of the user input from your `SwooleTW\Hyperf\Http\Request` instance without worrying about which HTTP verb was used for the request. Regardless of the HTTP verb, the `input` method may be used to retrieve user input:
+Using a few simple methods, you may access all of the user input from your `LaravelHyperf\Http\Request` instance without worrying about which HTTP verb was used for the request. Regardless of the HTTP verb, the `input` method may be used to retrieve user input:
 
 ```php
 $name = $request->input('name');
@@ -289,7 +293,7 @@ $name = $request->input('user.name');
 
 #### Retrieving Stringable Input Values
 
-Instead of retrieving the request's input data as a primitive `string`, you may use the `string` method to retrieve the request data as an instance of [`Hyperf\Stringable\Str`](/docs/helpers#fluent-strings):
+Instead of retrieving the request's input data as a primitive `string`, you may use the `string` method to retrieve the request data as an instance of [`LaravelHyperf\Support\Str`](/docs/helpers#fluent-strings):
 
 ```php
 $name = $request->string('name')->trim();
@@ -471,7 +475,7 @@ $request->mergeIfMissing(['votes' => 0]);
 
 #### Retrieving Cookies From Requests
 
-All cookies created by the Laravel Hyperf is plaintext instead of encrypted data like in Laravel. To retrieve a cookie value from the request, use the `cookie` method on an `SwooleTW\Hyperf\Http\Request` instance:
+All cookies created by the Laravel Hyperf is plaintext instead of encrypted data like in Laravel. To retrieve a cookie value from the request, use the `cookie` method on an `LaravelHyperf\Http\Request` instance:
 
 ```php
 $value = $request->cookie('name');
@@ -511,7 +515,7 @@ public function boot(): void
 
 ### Retrieving Uploaded Files
 
-You may retrieve uploaded files from an `SwooleTW\Hyperf\Http\Request` instance using the `file` method. The `file` method returns an instance of the `Hyperf\HttpMessage\Upload\UploadedFile` class, which extends the PHP `SplFileInfo` class and provides a variety of methods for interacting with the file:
+You may retrieve uploaded files from an `LaravelHyperf\Http\Request` instance using the `file` method. The `file` method returns an instance of the `Hyperf\HttpMessage\Upload\UploadedFile` class, which extends the PHP `SplFileInfo` class and provides a variety of methods for interacting with the file:
 
 ```php
 $file = $request->file('photo');

@@ -49,7 +49,7 @@ Typically, events should be registered via the `EventServiceProvider` `$listen` 
 ```php
 use App\Events\PodcastProcessed;
 use App\Listeners\SendPodcastNotification;
-use SwooleTW\Hyperf\Support\Facades\Event;
+use LaravelHyperf\Support\Facades\Event;
 
 /**
  * Register any other events for your application.
@@ -65,6 +65,49 @@ public function boot(): void
         // ...
     });
 }
+```
+
+#### Queueable Anonymous Event Listeners
+
+When registering closure based event listeners manually, you may wrap the listener closure within the `LaravelHyperf\Event\queueable` function to instruct Laravel Hyperf to execute the listener using the [queue](/docs/queues):
+
+```php
+use App\Events\PodcastProcessed;
+use function LaravelHyperf\Events\queueable;
+use LaravelHyperf\Support\Facades\Event;
+
+/**
+ * Register any other events for your application.
+ */
+public function boot(): void
+{
+    Event::listen(queueable(function (PodcastProcessed $event) {
+        // ...
+    }));
+}
+```
+
+Like queued jobs, you may use the `onConnection`, `onQueue`, and `delay` methods to customize the execution of the queued listener:
+
+```php
+Event::listen(queueable(function (PodcastProcessed $event) {
+    // ...
+})->onConnection('redis')->onQueue('podcasts')->delay(now()->addSeconds(10)));
+```
+
+If you would like to handle anonymous queued listener failures, you may provide a closure to the `catch` method while defining the `queueable` listener. This closure will receive the event instance and the `Throwable` instance that caused the listener's failure:
+
+```php
+use App\Events\PodcastProcessed;
+use function LaravelHyperf\Events\queueable;
+use LaravelHyperf\Support\Facades\Event;
+use Throwable;
+
+Event::listen(queueable(function (PodcastProcessed $event) {
+    // ...
+})->catch(function (PodcastProcessed $event, Throwable $e) {
+    // The queued listener failed...
+}));
 ```
 
 #### Wildcard Event Listeners
@@ -87,7 +130,7 @@ An event class is essentially a data container which holds the information relat
 namespace App\Events;
 
 use App\Models\Order;
-use SwooleTW\Hyperf\Foundation\Events\Dispatchable;
+use LaravelHyperf\Foundation\Events\Dispatchable;
 
 class OrderShipped
 {
@@ -155,7 +198,7 @@ To specify that a listener should be queued, add the `ShouldQueue` interface to 
 namespace App\Listeners;
 
 use App\Events\OrderShipped;
-use SwooleTW\Hyperf\Foundation\Contracts\Queue\ShouldQueue;
+use LaravelHyperf\Queue\Contracts\ShouldQueue;
 
 class SendShipmentNotification implements ShouldQueue
 {
@@ -163,7 +206,7 @@ class SendShipmentNotification implements ShouldQueue
 }
 ```
 
-That's it! Now, when an event handled by this listener is dispatched, the listener will automatically be queued by the event dispatcher using Laravel's [queue system](/docs/queues). If no exceptions are thrown when the listener is executed by the queue, the queued job will automatically be deleted after it has finished processing.
+That's it! Now, when an event handled by this listener is dispatched, the listener will automatically be queued by the event dispatcher using Laravel Hyperf's [queue system](/docs/queues). If no exceptions are thrown when the listener is executed by the queue, the queued job will automatically be deleted after it has finished processing.
 
 #### Customizing The Queue Connection, Name, & Delay
 
@@ -175,7 +218,7 @@ If you would like to customize the queue connection, queue name, or queue delay 
 namespace App\Listeners;
 
 use App\Events\OrderShipped;
-use SwooleTW\Hyperf\Foundation\Contracts\Queue\ShouldQueue;
+use LaravelHyperf\Queue\Contracts\ShouldQueue;
 
 class SendShipmentNotification implements ShouldQueue
 {
@@ -234,7 +277,7 @@ Sometimes, you may need to determine whether a listener should be queued based o
 namespace App\Listeners;
 
 use App\Events\OrderCreated;
-use SwooleTW\Hyperf\Foundation\Contracts\Queue\ShouldQueue;
+use LaravelHyperf\Queue\Contracts\ShouldQueue;
 
 class RewardGiftCard implements ShouldQueue
 {
@@ -258,7 +301,7 @@ class RewardGiftCard implements ShouldQueue
 
 ## Dispatching Events
 
-To dispatch an event, you may call the static `dispatch` method on the event. This method is made available on the event by the `SwooleTW\Hyperf\Foundation\Events\Dispatchable` trait. Any arguments passed to the `dispatch` method will be passed to the event's constructor:
+To dispatch an event, you may call the static `dispatch` method on the event. This method is made available on the event by the `LaravelHyperf\Foundation\Events\Dispatchable` trait. Any arguments passed to the `dispatch` method will be passed to the event's constructor:
 
 ```php
 <?php
@@ -269,7 +312,7 @@ use App\Events\OrderShipped;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Psr\Http\Message\ResponseInterface;
-use SwooleTW\Hyperf\Http\Request;
+use LaravelHyperf\Http\Request;
 
 class OrderShipmentController extends Controller
 {
@@ -298,8 +341,38 @@ OrderShipped::dispatchUnless($condition, $order);
 ```
 
 ::: note
-When testing, it can be helpful to assert that certain events were dispatched without actually triggering their listeners. Laravel's [built-in testing helpers](#testing) make it a cinch.
+When testing, it can be helpful to assert that certain events were dispatched without actually triggering their listeners. Laravel Hyperf's [built-in testing helpers](#testing) make it a cinch.
 :::
+
+### Dispatching Events After Database Transactions
+
+Sometimes, you may want to instruct Laravel Hyperf to only dispatch an event after the active database transaction has committed. To do so, you may implement the `ShouldDispatchAfterCommit` interface on the event class.
+
+This interface instructs Laravel Hyperf to not dispatch the event until the current database transaction is committed. If the transaction fails, the event will be discarded. If no database transaction is in progress when the event is dispatched, the event will be dispatched immediately:
+
+```php
+<?php
+
+namespace App\Events;
+
+use App\Models\Order;
+use LaravelHyperf\Broadcasting\InteractsWithSockets;
+use LaravelHyperf\Events\Contracts\ShouldDispatchAfterCommit;
+use LaravelHyperf\Foundation\Events\Dispatchable;
+use LaravelHyperf\Queue\SerializesModels;
+
+class OrderShipped implements ShouldDispatchAfterCommit
+{
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(
+        public Order $order,
+    ) {}
+}
+```
 
 ## Event Subscribers
 
@@ -314,7 +387,7 @@ namespace App\Listeners;
 
 use App\Events\Auth\Login;
 use App\Events\Auth\Logout;
-use SwooleTW\Hyperf\Events\EventDispatcher;
+use LaravelHyperf\Events\EventDispatcher;
 
 class UserEventSubscriber
 {
@@ -355,7 +428,7 @@ namespace App\Listeners;
 
 use App\Events\Auth\Login;
 use App\Events\Auth\Logout;
-use SwooleTW\Hyperf\Events\EventDispatcher;
+use LaravelHyperf\Events\EventDispatcher;
 
 class UserEventSubscriber
 {
@@ -394,7 +467,7 @@ After writing the subscriber, you are ready to register it with the event dispat
 namespace App\Providers;
 
 use App\Listeners\UserEventSubscriber;
-use SwooleTW\Hyperf\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use LaravelHyperf\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -427,7 +500,7 @@ namespace Tests\Feature;
 
 use App\Events\OrderFailedToShip;
 use App\Events\OrderShipped;
-use SwooleTW\Hyperf\Support\Facades\Event;
+use LaravelHyperf\Support\Facades\Event;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -519,7 +592,7 @@ namespace Tests\Feature;
 
 use App\Events\OrderCreated;
 use App\Models\Order;
-use SwooleTW\Hyperf\Support\Facades\Event;
+use LaravelHyperf\Support\Facades\Event;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase

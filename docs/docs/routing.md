@@ -6,12 +6,16 @@
 The most basic Laravel Hyperf routes accept a URI and a closure, providing a very simple and expressive method of defining routes and behavior without complicated routing configuration files:
 
 ```php
-use SwooleTW\Hyperf\Support\Facades\Route;
+use LaravelHyperf\Support\Facades\Route;
 
 Route::get('/greeting', function () {
     return 'Hello World';
 });
 ```
+
+::: important
+Laravel Hyperf uses `nikic/fast-route` as the core routing component. And the usage of Laravel Hyperf's routing system is similar to routing in Lumen framework.
+:::
 
 #### The Default Route Files
 
@@ -58,10 +62,10 @@ When defining multiple routes that share the same URI, routes using the `get`, `
 
 #### Dependency Injection
 
-You may type-hint any dependencies required by your route in your route's callback signature. The declared dependencies will automatically be resolved and injected into the callback by the Laravel [service container](/docs/container). For example, you may type-hint the `Illuminate\Http\Request` class to have the current HTTP request automatically injected into your route callback:
+You may type-hint any dependencies required by your route in your route's callback signature. The declared dependencies will automatically be resolved and injected into the callback by the Laravel [service container](/docs/container). For example, you may type-hint the `LaravelHyperf\Http\Request` class to have the current HTTP request automatically injected into your route callback:
 
 ```php
-use Hyperf\HttpServer\Request;
+use LaravelHyperf\Http\Request;
 
 Route::get('/users', function (Request $request) {
     // ...
@@ -113,7 +117,7 @@ Route parameters cannot contain the `-` character. Use an underscore (`_`) inste
 If your route has dependencies that you would like the Laravel Hyperf service container to automatically inject into your route's callback, you should list your route parameters after your dependencies:
 
 ```php
-use Hyperf\HttpServer\Request;
+use LaravelHyperf\Http\Request;
 
 Route::get('/user/{id}', function (Request $request, string $id) {
     return 'User '.$id;
@@ -203,6 +207,30 @@ Route::group('api', function () {
 }, ['middleware' => 'auth']);
 ```
 
+### Namespaces
+
+Another common use-case for route groups is assigning the same PHP namespace to a group of controllers. You may use the `namespace` parameter in your group attribute array to specify the namespace for all controllers within the group:
+
+```php
+Route::group('/api', function () {
+    Route::get('/', function () {
+        // Using The "App\Http\Controllers\Admin" Namespace...
+    });
+}, ['namespace' => 'App\Http\Controllers\Admin']);
+```
+
+### Route Prefixes
+
+The route in the group definition will serve as prefix for nested routes with a given URI. For example, you may want to prefix all route URIs within the group with `admin`:
+
+```php
+Route::group('/admin', function () {
+    Route::get('/users', function () {
+         // Matches The "/admin/users" URL
+    });
+});
+```
+
 ## Route Model Binding
 
 When injecting a model ID to a route or controller action, you will often query the database to retrieve the model that corresponds to that ID. Laravel Hyperf route model binding provides a convenient way to automatically inject the model instances directly into your routes. For example, instead of injecting a user's ID, you can inject the entire `User` model instance that matches the given ID.
@@ -238,7 +266,7 @@ public function show(User $user)
 ```
 
 ::: info
-This feature is provided via `SwooleTW\Hyperf\Router\Middleware\SubstituteBindings`, and it's disabled by default. You can extend this middleware to customize your resolving behaviors.
+This feature is provided via `LaravelHyperf\Router\Middleware\SubstituteBindings`, and it's disabled by default. You can extend this middleware to customize your resolving behaviors.
 :::
 
 ### Implicit Enum Binding
@@ -261,7 +289,7 @@ You may define a route that will only be invoked if the `{category}` route segme
 
 ```php
 use App\Enums\Category;
-use SwooleTW\Hyperf\Support\Facades\Route;
+use LaravelHyperf\Support\Facades\Route;
 
 Route::get('/categories/{category}', function (Category $category) {
     return $category->value;
@@ -270,8 +298,8 @@ Route::get('/categories/{category}', function (Category $category) {
 
 #### Throttling With Redis
 
-Typically, the `throttle` middleware is mapped to the `SwooleTW\Hyperf\Router\Middleware\ThrottleRequests` class. This mapping is defined in your application's HTTP kernel (`App\Http\Kernel`). However, if you are using Redis as your application's cache driver, you may wish to change this mapping to use the `Illuminate\Routing\Middleware\ThrottleRequestsWithRedis` class. This class is more efficient at managing rate limiting using Redis:
+Typically, the `throttle` middleware is mapped to the `LaravelHyperf\Router\Middleware\ThrottleRequests` class. This mapping is defined in your application's HTTP kernel (`App\Http\Kernel`). However, if you are using Redis as your application's cache driver, you may wish to change this mapping to use the `Illuminate\Routing\Middleware\ThrottleRequestsWithRedis` class. This class is more efficient at managing rate limiting using Redis:
 
 ```php
-'throttle' => \SwooleTW\Hyperf\Router\Middleware\ThrottleRequests::class,
+'throttle' => \LaravelHyperf\Router\Middleware\ThrottleRequests::class,
 ```

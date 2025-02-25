@@ -3,9 +3,9 @@
 
 ## Introduction
 
-In Hyperf framework, config providers are the core mechanism to provide service discovery like service providers in Laravel. Hyperf ensures that all components are properly configured and ready for use as soon as the application starts. This approach allows for a modular and flexible configuration system, where each component can manage its own configuration independently.
+In Laravel Hyperf, config providers are the core mechanism to provide service discovery like service providers in Laravel. Laravel Hyperf ensures that all components are properly configured and ready for use as soon as the application starts. This approach allows for a modular and flexible configuration system, where each component can manage its own configuration independently.
 
-Besides config providers, service providers are also supported in Laravel Hyperf.
+Laravel Hyperf supports both config providers and service providers.
 Service providers are the central place of all Laravel Hyperf application bootstrapping. Your own application, as well as some Laravel Hyperf's core services, are bootstrapped via service providers.
 
 But, what do we mean by "bootstrapped"? In general, we mean **registering** things, including registering service container bindings, event listeners, middleware, and even routes. Service providers are the central place to configure your application.
@@ -20,7 +20,7 @@ If you would like to learn more about how Laravel Hyperf handles requests and wo
 
 ## Writing Config Providers
 
-Config Providers are placed in each root directory of the component. These providers will supply all the configuration information of the corresponding component, which will be started by the Hyperf framework when loaded.
+Config Providers are placed in each root directory of the component. These providers will supply all the configuration information of the corresponding component, which will be started by the Laravel Hyperf framework when loaded.
 
 The final configuration information in Config Providers will be merged into the corresponding implementation class of `Hyperf\Contract\ConfigInterface`. This process enables the configuration initialization of each component when used under the Hyperf framework.
 
@@ -59,13 +59,13 @@ class ConfigProvider
 ```
 
 * `dependencies`:
-This key is used to define dependency injection configurations. It will be merged into the `config/dependencies.php` file.
+This key is used to define dependency injection configurations. It will be merged into the `config/dependencies.php` file. You can define your dependency bindings here, which is equivalent to binding interfaces in service containers.
 
 * `annotations`:
 This key is used to configure annotation scanning. It will be merged into the `config/annotations.php` file. In this example, it sets the scan path to the current directory.
 
 * `commands`:
-This key is used to define default commands. It will be merged into `Hyperf\Contract\ConfigInterface`, which can also be understood as corresponding to the `config/commands.php` file.
+This key is used to define command classes. It will be merged into commands config array, which can also be understood as corresponding to the `config/commands.php` file. And these commands will be registered when the framework bootstrapped.
 
 * `listeners`:
 This key functions similarly to commands and is used to define listeners.
@@ -78,11 +78,13 @@ In addition to the predefined configuration keys above, you can define other con
 
 ## Writing Service Providers
 
-All service providers extend the `SwooleTW\Hyperf\Support\ServiceProvider` class. Most service providers contain a `register` and a `boot` method. Within the `register` method, you should **only bind things into the [service container](/docs/container)**. You should never attempt to register any event listeners, routes, or any other piece of functionality within the `register` method.
+All service providers extend the `LaravelHyperf\Support\ServiceProvider` class. Most service providers contain a `register` and a `boot` method. Within the `register` method, you should **only bind things into the [service container](/docs/container)**. You should never attempt to register any event listeners, routes, or any other piece of functionality within the `register` method.
 
-::: note
-`make:provider` command will be provided in the future release.
-:::
+The Artisan CLI can generate a new provider via the `make:provider` command.
+
+```shell:no-line-numbers
+php artisan make:provider RiakServiceProvider
+```
 
 ### The Register Method
 
@@ -96,8 +98,8 @@ Let's take a look at a basic service provider. Within any of your service provid
 namespace App\Providers;
 
 use App\Services\Riak\Connection;
-use SwooleTW\Hyperf\Foundation\Contracts\Application;
-use SwooleTW\Hyperf\Support\ServiceProvider;
+use LaravelHyperf\Foundation\Contracts\Application;
+use LaravelHyperf\Support\ServiceProvider;
 
 class RiakServiceProvider extends ServiceProvider
 {
@@ -113,7 +115,7 @@ class RiakServiceProvider extends ServiceProvider
 }
 ```
 
-This service provider only defines a `register` method, and uses that method to define an implementation of `App\Services\Riak\Connection` in the service container. If you're not yet familiar with Laravel's service container, check out [its documentation](/docs/container).
+This service provider only defines a `register` method, and uses that method to define an implementation of `App\Services\Riak\Connection` in the service container. If you're not yet familiar with Laravel Hyperf's service container, check out [its documentation](/docs/container).
 
 #### The `bindings` and `singletons` Properties
 
@@ -126,20 +128,22 @@ namespace App\Providers;
 
 use App\Contracts\ServerProvider;
 use App\Services\DigitalOceanServerProvider;
-use SwooleTW\Hyperf\Support\ServiceProvider;
+use LaravelHyperf\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * All of the container bindings that should be registered.
-     *
-     * @var array
      */
     public array $bindings = [
         ServerProvider::class => DigitalOceanServerProvider::class,
     ];
 }
 ```
+
+:::tip
+You can also set these bindings in `config/dependencies.php`.
+:::
 
 ### The Boot Method
 
@@ -150,9 +154,9 @@ So, what if we need to extend `Request` functions within our service provider? T
 
 namespace App\Providers;
 
-use Hyperf\HttpServer\Request;
-use SwooleTW\Hyperf\Foundation\Macros\RequestMacro;
-use SwooleTW\Hyperf\Support\ServiceProvider;
+use LaravelHyperf\Http\Request;
+use LaravelHyperf\Foundation\Macros\RequestMacro;
+use LaravelHyperf\Support\ServiceProvider;
 
 class RequestServiceProvider extends ServiceProvider
 {
@@ -184,14 +188,13 @@ public function boot(ConnectionResolverInterface $resolver): void
 
 ## Registering Providers
 
-All service providers are registered in the `config/app.php` configuration file. This file contains a `providers` array where you can list the class names of your service providers. By default, a set of Laravel core service providers are registered in this array. The default providers bootstrap the core Laravel components, such as the mailer, queue, cache, and others.
+All service providers are registered in the `config/app.php` configuration file. This file contains a `providers` array where you can list the class names of your service providers. By default, a set of Laravel Hyperf core service providers are registered in this array. The default providers bootstrap the core Laravel Hyperf components.
 
 To register your provider, add it to the array:
 
 ```php
 'providers' => [
-    SwooleTW\Hyperf\Foundation\Providers\FoundationServiceProvider::class,
-    SwooleTW\Hyperf\Foundation\Providers\FormRequestServiceProvider::class,
+    LaravelHyperf\Foundation\Providers\FoundationServiceProvider::class,
     App\Providers\RouteServiceProvider::class,
     App\Providers\AppServiceProvider::class,
     App\Providers\EventServiceProvider::class,

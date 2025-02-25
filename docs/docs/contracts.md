@@ -3,7 +3,7 @@
 
 ## Introduction
 
-Laravel Hyperf's "contracts" are a set of interfaces that define the core services provided by the framework. For example, an `SwooleTW\Hyperf\Auth\Contracts\Gate` contract defines the methods needed for authorizing a resource, while the `SwooleTW\Hyperf\Hashing\Contracts\Hasher` contract defines the methods needed for generating a secure hash.
+Laravel Hyperf's "contracts" are a set of interfaces that define the core services provided by the framework. For example, an `LaravelHyperf\Auth\Contracts\Gate` contract defines the methods needed for authorizing a resource, while the `LaravelHyperf\Hashing\Contracts\Hasher` contract defines the methods needed for generating a secure hash.
 
 All of the contracts live separately in the `Contracts` directory in their belonging packages. This provides a quick reference point for all available contracts, as well as a single, decoupled package that may be utilized when building packages that interact with Laravel Hyperf services.
 
@@ -34,7 +34,7 @@ namespace App\Listeners;
 
 use App\Events\OrderWasPlaced;
 use App\Models\User;
-use SwooleTW\Hyperf\Cache\Contracts\Factory;
+use LaravelHyperf\Cache\Contracts\Factory;
 
 class CacheOrderInformation
 {
@@ -64,38 +64,58 @@ This table provides a quick reference to all of the Laravel Hyperf contracts and
 
 | Contract                                                                                                                                               | References Facade         |
 |--------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------|
-| [SwooleTW\Hyperf\Auth\Contracts\Authorizable](https://github.com/swooletw/hyperf-packages/blob/master/src/auth/src/Contracts/Authorizable.php)                 |  &nbsp;                   |
-| [SwooleTW\Hyperf\Auth\Contracts\Gate](https://github.com/swooletw/hyperf-packages/blob/master/src/auth/src/Contracts/Gate.php)                                 | `Gate`                    |
-| [SwooleTW\Hyperf\Auth\Contracts\Authenticatable](https://github.com/swooletw/hyperf-packages/blob/master/src/auth/src/Contracts/Authenticatable.php)                         |  &nbsp;                   |
-| [SwooleTW\Hyperf\Auth\Contracts\FactoryContract](https://github.com/swooletw/hyperf-packages/blob/master/src/auth/src/Contracts/FactoryContract.php)                                         | `Auth`                    |
-| [SwooleTW\Hyperf\Auth\Contracts\Guard](https://github.com/swooletw/hyperf-packages/blob/master/src/auth/src/Contracts/Guard.php)                                             | &nbsp;           |
-| [SwooleTW\Hyperf\Auth\Contracts\StatefulGuard](https://github.com/swooletw/hyperf-packages/blob/master/src/auth/src/Contracts/StatefulGuard.php)                             | &nbsp;                    |
-| [SwooleTW\Hyperf\Auth\Contracts\SupportsBasicAuth](https://github.com/swooletw/hyperf-packages/blob/master/src/auth/src/Contracts/SupportsBasicAuth.php)                     | &nbsp;                    |
-| [SwooleTW\Hyperf\Auth\Contracts\UserProvider](https://github.com/swooletw/hyperf-packages/blob/master/src/auth/src/Contracts/UserProvider.php)                               | &nbsp;                    |
-| [SwooleTW\Hyperf\Cache\Contracts\Factory](https://github.com/swooletw/hyperf-packages/blob/master/src/cache/src/Contracts/Factory.php)                                       | `Cache`                   |
-| [SwooleTW\Hyperf\Cache\Contracts\Lock](https://github.com/swooletw/hyperf-packages/blob/master/src/cache/src/Contracts/Lock.php)                                             | &nbsp;                    |
-| [SwooleTW\Hyperf\Cache\Contracts\LockProvider](https://github.com/swooletw/hyperf-packages/blob/master/src/cache/src/Contracts/LockProvider.php)                             | &nbsp;                    |
-| [SwooleTW\Hyperf\Cache\Contracts\Repository](https://github.com/swooletw/hyperf-packages/blob/master/src/cache/src/Contracts/Repository.php)                                 | `Cache::driver()`         |
-| [SwooleTW\Hyperf\Cache\Contracts\Store](https://github.com/swooletw/hyperf-packages/blob/master/src/cache/src/Contracts/Store.php)                                           | &nbsp;                    |
-| [SwooleTW\Hyperf\Config\Contracts\Repository](https://github.com/swooletw/hyperf-packages/blob/master/src/config/src/Contracts/Repository.php)                               | `Config`                  |
-| [SwooleTW\Hyperf\Filesystem\Contracts\Cloud](https://github.com/swooletw/hyperf-packages/blob/master/src/filesystem/src/Contracts/Cloud.php)                           | `Storage::cloud()`                    |
-| [SwooleTW\Hyperf\Filesystem\Contracts\Factory](https://github.com/swooletw/hyperf-packages/blob/master/src/filesystem/src/Contracts/Factory.php)                           | `Storage`                    |
-| [SwooleTW\Hyperf\Filesystem\Contracts\Filesystem](https://github.com/swooletw/hyperf-packages/blob/master/src/filesystem/src/Contracts/Filesystem.php)                           | `Storage::disk()`                    |
-| [SwooleTW\Hyperf\Foundation\Contracts\Application](https://github.com/swooletw/hyperf-packages/blob/master/src/foundation/src/Contracts/Application.php)                           | `App`                    |
-| [SwooleTW\Hyperf\Foundation\Console\Contracts\Application](https://github.com/swooletw/hyperf-packages/blob/master/src/foundation/src/Console/Contracts/Application.php)                           | &nbsp;                    |
-| [SwooleTW\Hyperf\Foundation\Console\Contracts\Kernel](https://github.com/swooletw/hyperf-packages/blob/master/src/foundation/src/Console/Contracts/Kernel.php)                           | `Artisan`                    |
-| [SwooleTW\Hyperf\Foundation\Console\Contracts\Schedule](https://github.com/swooletw/hyperf-packages/blob/master/src/foundation/src/Console/Contracts/Schedule.php)                           | `Schedule`                    |
-| [SwooleTW\Hyperf\Foundation\Exceptions\Contracts\ExceptionHandler](https://github.com/swooletw/hyperf-packages/blob/master/src/foundation/src/Exceptions/Contracts/ExceptionHandler.php)                           | &nbsp;                    |
-| [SwooleTW\Hyperf\Foundation\Exceptions\Contracts\ExceptionRenderer](https://github.com/swooletw/hyperf-packages/blob/master/src/foundation/src/Exceptions/Contracts/ExceptionRenderer.php)                           | &nbsp;                    |
-| [SwooleTW\Hyperf\Foundation\Http\Contracts\ExceptionRenderer](https://github.com/swooletw/hyperf-packages/blob/master/src/foundation/src/Http/Contracts/MiddlewareContract.php)                           | &nbsp;                    |
-| [SwooleTW\Hyperf\Container\Contracts\Container](https://github.com/swooletw/hyperf-packages/blob/master/src/container/src/Contracts/Container.php)                           | `App`                     |
-| [SwooleTW\Hyperf\Cookie\Contracts\Cookie](https://github.com/swooletw/hyperf-packages/blob/master/src/cookie/src/Contracts/Cookie.php)                                     | `Cookie`                  |
-| [SwooleTW\Hyperf\Encryption\Contracts\Encrypter](https://github.com/swooletw/hyperf-packages/blob/master/src/encryption/src/Contracts/Encrypter.php)                         | `Crypt`                   |
-| [SwooleTW\Hyperf\Hashing\Contracts\Hasher](https://github.com/swooletw/hyperf-packages/blob/master/src/hashing/src/Contracts/Hasher.php)                                     | `Hash`                    |
-| [SwooleTW\Hyperf\Http\Contracts\RequestContract](https://github.com/swooletw/hyperf-packages/blob/master/src/http/src/Contracts/RequestContract.php)                                           | `Request`                    |
-| [SwooleTW\Hyperf\Http\Contracts\ResponseContract](https://github.com/swooletw/hyperf-packages/blob/master/src/http/src/Contracts/ResponseContract.php)                                           | `Response`                    |
-| [SwooleTW\Hyperf\Router\Contracts\UrlGenerator](https://github.com/swooletw/hyperf-packages/blob/master/src/router/src/Contracts/UrlGenerator.php)                         | `URL`                     |
-| [SwooleTW\Hyperf\Router\Contracts\UrlGenerator](https://github.com/swooletw/hyperf-packages/blob/master/src/router/src/Contracts/UrlGenerator.php)                         | `URL`                     |
+| [LaravelHyperf\Auth\Contracts\Authorizable](https://github.com/laravel-hyperf/components/blob/master/src/auth/src/Contracts/Authorizable.php)                 |  &nbsp;                   |
+| [LaravelHyperf\Auth\Contracts\Gate](https://github.com/laravel-hyperf/components/blob/master/src/auth/src/Contracts/Gate.php)                                 | `Gate`                    |
+| [LaravelHyperf\Auth\Contracts\Authenticatable](https://github.com/laravel-hyperf/components/blob/master/src/auth/src/Contracts/Authenticatable.php)                         |  &nbsp;                   |
+| [LaravelHyperf\Auth\Contracts\FactoryContract](https://github.com/laravel-hyperf/components/blob/master/src/auth/src/Contracts/FactoryContract.php)                                         | `Auth`                    |
+| [LaravelHyperf\Auth\Contracts\Guard](https://github.com/laravel-hyperf/components/blob/master/src/auth/src/Contracts/Guard.php)                                             | `Auth::guard()`         |
+| [LaravelHyperf\Auth\Contracts\StatefulGuard](https://github.com/laravel-hyperf/components/blob/master/src/auth/src/Contracts/StatefulGuard.php)                             | &nbsp;                    |
+| [LaravelHyperf\Auth\Contracts\SupportsBasicAuth](https://github.com/laravel-hyperf/components/blob/master/src/auth/src/Contracts/SupportsBasicAuth.php)                     | &nbsp;                    |
+| [LaravelHyperf\Auth\Contracts\UserProvider](https://github.com/laravel-hyperf/components/blob/master/src/auth/src/Contracts/UserProvider.php)                               | &nbsp;                    |
+| [LaravelHyperf\Bus\Contracts\Dispatcher](https://github.com/laravel-hyperf/components/blob/master/src/bus/src/Contracts/Dispatcher.php)                               | `Bus`                    |
+| [LaravelHyperf\Bus\Contracts\QueuingDispatcher](https://github.com/laravel-hyperf/components/blob/master/src/bus/src/Contracts/QueuingDispatcher.php)                               | `Bus::dispatchToQueue()`        |
+| [LaravelHyperf\Broadcasting\Contracts\Factory](https://github.com/laravel-hyperf/components/blob/master/src/broadcasting/src/Contracts/Factory.php)                               | `Broadcast`                  |
+| [LaravelHyperf\Broadcasting\Contracts\Broadcaster](https://github.com/laravel-hyperf/components/blob/master/src/broadcasting/src/Contracts/Broadcaster.php)                               | `Broadcast::connection()`           |
+| [LaravelHyperf\Broadcasting\Contracts\ShouldBroadcast](https://github.com/laravel-hyperf/components/blob/master/src/broadcasting/src/Contracts/ShouldBroadcast.php)                               | &nbsp;                    |
+| [LaravelHyperf\Broadcasting\Contracts\ShouldBroadcastNow](https://github.com/laravel-hyperf/components/blob/master/src/broadcasting/src/Contracts/ShouldBroadcastNow.php)                               | &nbsp;                    |
+| [LaravelHyperf\Cache\Contracts\Factory](https://github.com/laravel-hyperf/components/blob/master/src/cache/src/Contracts/Factory.php)                                       | `Cache`                   |
+| [LaravelHyperf\Cache\Contracts\Lock](https://github.com/laravel-hyperf/components/blob/master/src/cache/src/Contracts/Lock.php)                                             | &nbsp;                    |
+| [LaravelHyperf\Cache\Contracts\LockProvider](https://github.com/laravel-hyperf/components/blob/master/src/cache/src/Contracts/LockProvider.php)                             | &nbsp;                    |
+| [LaravelHyperf\Cache\Contracts\Repository](https://github.com/laravel-hyperf/components/blob/master/src/cache/src/Contracts/Repository.php)                                 | `Cache::driver()`         |
+| [LaravelHyperf\Cache\Contracts\Store](https://github.com/laravel-hyperf/components/blob/master/src/cache/src/Contracts/Store.php)                                           | &nbsp;                    |
+| [LaravelHyperf\Config\Contracts\Repository](https://github.com/laravel-hyperf/components/blob/master/src/config/src/Contracts/Repository.php)                               | `Config`                  |
+| [LaravelHyperf\Container\Contracts\Container](https://github.com/laravel-hyperf/components/blob/master/src/container/src/Contracts/Container.php)                               | `App`                  |
+| [LaravelHyperf\Foundation\Exceptions\Contracts\ExceptionHandler](https://github.com/laravel-hyperf/components/blob/master/src/foundation/src/Exceptions/Contracts/ExceptionHandler.php)                               | &nbsp;                  |
+| [LaravelHyperf\Encryption\Contracts\Encrypter](https://github.com/laravel-hyperf/components/blob/master/src/encryption/src/Contracts/ReposEncrypteritory.php)                               | `Crypt`                  |
+| [LaravelHyperf\Event\Contracts\Dispatcher](https://github.com/laravel-hyperf/components/blob/master/src/event/src/Contracts/Dispatcher.php)                               | `Event`                  |
+| [LaravelHyperf\Filesystem\Contracts\Cloud](https://github.com/laravel-hyperf/components/blob/master/src/filesystem/src/Contracts/Cloud.php)                           | `Storage::cloud()`                    |
+| [LaravelHyperf\Filesystem\Contracts\Factory](https://github.com/laravel-hyperf/components/blob/master/src/filesystem/src/Contracts/Factory.php)                           | `Storage`                    |
+| [LaravelHyperf\Filesystem\Contracts\Filesystem](https://github.com/laravel-hyperf/components/blob/master/src/filesystem/src/Contracts/Filesystem.php)                           | `Storage::disk()`                    |
+| [LaravelHyperf\Foundation\Contracts\Application](https://github.com/laravel-hyperf/components/blob/master/src/foundation/src/Contracts/Application.php)                           | `App`                    |
+| [LaravelHyperf\Foundation\Console\Contracts\Application](https://github.com/laravel-hyperf/components/blob/master/src/foundation/src/Console/Contracts/Application.php)                           | &nbsp;                    |
+| [LaravelHyperf\Foundation\Console\Contracts\Kernel](https://github.com/laravel-hyperf/components/blob/master/src/foundation/src/Console/Contracts/Kernel.php)                           | `Artisan`                    |
+| [LaravelHyperf\Hashing\Contracts\Hasher](https://github.com/laravel-hyperf/components/blob/master/src/hashing/src/Contracts/Hasher.php)                           | `Hash`                    |
+| [LaravelHyperf\Mail\Contracts\MailQueue](https://github.com/laravel-hyperf/components/blob/master/src/mail/src/Contracts/MailQueue.php)                           | `Mail::queue()`                    |
+| [LaravelHyperf\Mail\Contracts\Mailable](https://github.com/laravel-hyperf/components/blob/master/src/mail/src/Contracts/Mailable.php)                           | &nbsp;                    |
+| [LaravelHyperf\Mail\Contracts\Mailer](https://github.com/laravel-hyperf/components/blob/master/src/mail/src/Contracts/Mailer.php)                           | `Mail`                    |
+| [LaravelHyperf\Notifications\Contracts\Dispatcher](https://github.com/laravel-hyperf/components/blob/master/src/notifications/src/Contracts/Dispatcher.php)                           | `Notification`                    |
+| [LaravelHyperf\Notifications\Contracts\Factory](https://github.com/laravel-hyperf/components/blob/master/src/notifications/src/Contracts/Factory.php)                           | `Notification`                    |
+| [LaravelHyperf\Queue\Contracts\EntityResolver](https://github.com/laravel-hyperf/components/blob/master/src/queue/src/Contracts/EntityResolver.php)                           | &nbsp;                    |
+| [LaravelHyperf\Queue\Contracts\Factory](https://github.com/laravel-hyperf/components/blob/master/src/queue/src/Contracts/Factory.php)                           | `Queue`                    |
+| [LaravelHyperf\Queue\Contracts\Job](https://github.com/laravel-hyperf/components/blob/master/src/queue/src/Contracts/Job.php)                           | &nbsp;                    |
+| [LaravelHyperf\Queue\Contracts\Monitor](https://github.com/laravel-hyperf/components/blob/master/src/queue/src/Contracts/Factory.php)                           | `Queue`                    |
+| [LaravelHyperf\Queue\Contracts\Queue](https://github.com/laravel-hyperf/components/blob/master/src/queue/src/Contracts/Queue.php)                           | `Queue::connection()`                    |
+| [LaravelHyperf\Queue\Contracts\QueueableCollection](https://github.com/laravel-hyperf/components/blob/master/src/queue/src/Contracts/QueueableCollection.php)                           | &nbsp;                    |
+| [LaravelHyperf\Queue\Contracts\QueueableEntity](https://github.com/laravel-hyperf/components/blob/master/src/queue/src/Contracts/QueueableEntity.php)                           | &nbsp;                    |
+| [LaravelHyperf\Queue\Contracts\ShouldQueue](https://github.com/laravel-hyperf/components/blob/master/src/queue/src/Contracts/ShouldQueue.php)                           | &nbsp;                    |
+| [LaravelHyperf\Foundation\Console\Contracts\Schedule](https://github.com/laravel-hyperf/components/blob/master/src/foundation/src/Console/Contracts/Schedule.php)                           | `Schedule`                    |
+| [LaravelHyperf\Foundation\Exceptions\Contracts\ExceptionHandler](https://github.com/laravel-hyperf/components/blob/master/src/foundation/src/Exceptions/Contracts/ExceptionHandler.php)                           | &nbsp;                    |
+| [LaravelHyperf\Foundation\Exceptions\Contracts\ExceptionRenderer](https://github.com/laravel-hyperf/components/blob/master/src/foundation/src/Exceptions/Contracts/ExceptionRenderer.php)                           | &nbsp;                    |
+| [LaravelHyperf\Foundation\Http\Contracts\ExceptionRenderer](https://github.com/laravel-hyperf/components/blob/master/src/foundation/src/Http/Contracts/MiddlewareContract.php)                           | &nbsp;                    |
+| [LaravelHyperf\Cookie\Contracts\Cookie](https://github.com/laravel-hyperf/components/blob/master/src/cookie/src/Contracts/Cookie.php)                                     | `Cookie`                  |
+| [LaravelHyperf\Http\Contracts\RequestContract](https://github.com/laravel-hyperf/components/blob/master/src/http/src/Contracts/RequestContract.php)                                           | `Request`                    |
+| [LaravelHyperf\Http\Contracts\ResponseContract](https://github.com/laravel-hyperf/components/blob/master/src/http/src/Contracts/ResponseContract.php)                                           | `Response`                    |
+| [LaravelHyperf\Router\Contracts\UrlGenerator](https://github.com/laravel-hyperf/components/blob/master/src/router/src/Contracts/UrlGenerator.php)                         | `URL`                     |
 
 ::: info
 The contracts in Hyperf can refer to [hyperf/contract](https://github.com/hyperf/hyperf/tree/master/src/contract/src) package

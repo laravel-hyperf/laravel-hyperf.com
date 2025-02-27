@@ -3,10 +3,9 @@
 
 ## Introduction
 
-In Laravel Hyperf, config providers are the core mechanism to provide service discovery like service providers in Laravel. Laravel Hyperf ensures that all components are properly configured and ready for use as soon as the application starts. This approach allows for a modular and flexible configuration system, where each component can manage its own configuration independently.
+Service providers are the central place of all Laravel Hyperf application bootstrapping. Your own application, as well as all of Laravel's core services, are bootstrapped via service providers.
 
-Laravel Hyperf supports both config providers and service providers.
-Service providers are the central place of all Laravel Hyperf application bootstrapping. Your own application, as well as some Laravel Hyperf's core services, are bootstrapped via service providers.
+Laravel Hyperf ensures that all components are properly configured and ready for use as soon as the application starts. This approach allows for a modular and flexible configuration system, where each component can manage its own configuration independently.
 
 But, what do we mean by "bootstrapped"? In general, we mean **registering** things, including registering service container bindings, event listeners, middleware, and even routes. Service providers are the central place to configure your application.
 
@@ -17,64 +16,6 @@ In this overview, you will learn how to write your own service providers and reg
 ::: note
 If you would like to learn more about how Laravel Hyperf handles requests and works internally, check out our documentation on the Laravel [request lifecycle](/docs/lifecycle).
 :::
-
-## Writing Config Providers
-
-Config Providers are placed in each root directory of the component. These providers will supply all the configuration information of the corresponding component, which will be started by the Laravel Hyperf framework when loaded.
-
-The final configuration information in Config Providers will be merged into the corresponding implementation class of `Hyperf\Contract\ConfigInterface`. This process enables the configuration initialization of each component when used under the Hyperf framework.
-
-### How to define a ConfigProvider?
-
-```php
-<?php
-
-namespace Hyperf\Foo;
-
-class ConfigProvider
-{
-     public function __invoke(): array
-     {
-         return [
-             'dependencies' => [],
-             'annotations' => [
-                 'scan' => [
-                     'paths' => [
-                         __DIR__,
-                     ],
-                 ],
-             ],
-             'listeners' => [],
-             'publish' => [
-                 [
-                     'id' => 'config',
-                     'description' => 'description of this config file.',
-                     'source' => __DIR__ . '/../publish/file.php',
-                     'destination' => BASE_PATH . '/config/autoload/file.php',
-                 ],
-             ],
-         ];
-     }
-}
-```
-
-* `dependencies`:
-This key is used to define dependency injection configurations. It will be merged into the `config/dependencies.php` file. You can define your dependency bindings here, which is equivalent to binding interfaces in service containers.
-
-* `annotations`:
-This key is used to configure annotation scanning. It will be merged into the `config/annotations.php` file. In this example, it sets the scan path to the current directory.
-
-* `commands`:
-This key is used to define command classes. It will be merged into commands config array, which can also be understood as corresponding to the `config/commands.php` file. And these commands will be registered when the framework bootstrapped.
-
-* `listeners`:
-This key functions similarly to commands and is used to define listeners.
-
-* `publish`:
-This key is used to define the component's default configuration files. When the publish command is executed, the file corresponding to the source will be copied to the path corresponding to the destination. In this example, it defines a configuration file with the ID 'config', including a description, source file path, and destination file path.
-
-* `Other configurations`:
-In addition to the predefined configuration keys above, you can define other configurations. These configurations will ultimately be merged into the configuration corresponding to ConfigInterface.
 
 ## Writing Service Providers
 

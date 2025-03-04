@@ -141,6 +141,10 @@ export const sidebarConfig = ({
                             link: 'context',
                         },
                         {
+                            text: 'Coroutine',
+                            link: 'coroutine',
+                        },
+                        {
                             text: 'Contracts',
                             link: 'contracts',
                         },
@@ -163,6 +167,14 @@ export const sidebarConfig = ({
                         {
                             text: 'Localization',
                             link: 'localization',
+                        },
+                        {
+                            text: 'Mail',
+                            link: 'mail',
+                        },
+                        {
+                            text: 'Notifications',
+                            link: 'notifications',
                         },
                         {
                             text: 'Package Development',

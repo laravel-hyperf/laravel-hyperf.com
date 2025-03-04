@@ -431,7 +431,7 @@ $response = Http::withOptions([
 
 Sometimes, you may wish to make multiple HTTP requests concurrently. In other words, you want several requests to be dispatched at the same time instead of issuing the requests sequentially. This can lead to substantial performance improvements when interacting with slow HTTP APIs.
 
-Unlike in Laravel, http client in Laravel Hyperf doesn't provide an additional `pool` method for concurrent requests. Because all the http requests in Laravel Hyperf are non-blocking, and you can request them concurrently easily with `LaravelHyperf\Coroutine\parallel` function.
+Unlike Laravel, http client in Laravel Hyperf doesn't provide an additional `pool` method for concurrent requests. Because all the http requests in Laravel Hyperf are coroutine, and you can request them concurrently easily with `LaravelHyperf\Coroutine\parallel` function.
 
 ```php
 use LaravelHyperf\Support\Facades\Http;

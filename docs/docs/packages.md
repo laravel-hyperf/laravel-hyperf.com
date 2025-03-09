@@ -121,7 +121,7 @@ Also, resource path in Hyperf framework has strong coupling with `BASE_PATH` con
 
 [Service providers](/docs/providers) are the connection point between your package and Laravel Hyperf. A service provider is responsible for binding things into Laravel Hyperf's [service container](/docs/container) and informing Laravel Hyperf where to load package resources such as views, configuration, and language files.
 
-A service provider extends the `Illuminate\Support\ServiceProvider` class and contains two methods: `register` and `boot`. The base `ServiceProvider` class is located in the `illuminate/support` Composer package, which you should add to your own package's dependencies. To learn more about the structure and purpose of service providers, check out [their documentation](/docs/providers).
+A service provider extends the `LaravelHyperf\Support\ServiceProvider` class and contains two methods: `register` and `boot`. The base `ServiceProvider` class is located in the `laravel-hyperf/support` Composer package, which you should add to your own package's dependencies. To learn more about the structure and purpose of service providers, check out [their documentation](/docs/providers).
 
 ## Resources
 

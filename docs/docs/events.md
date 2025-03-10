@@ -130,7 +130,7 @@ An event class is essentially a data container which holds the information relat
 namespace App\Events;
 
 use App\Models\Order;
-use LaravelHyperf\Foundation\Events\Dispatchable;
+use LaravelHyperf\Foundation\Bus\Dispatchable;
 
 class OrderShipped
 {
@@ -301,7 +301,7 @@ class RewardGiftCard implements ShouldQueue
 
 ## Dispatching Events
 
-To dispatch an event, you may call the static `dispatch` method on the event. This method is made available on the event by the `LaravelHyperf\Foundation\Events\Dispatchable` trait. Any arguments passed to the `dispatch` method will be passed to the event's constructor:
+To dispatch an event, you may call the static `dispatch` method on the event. This method is made available on the event by the `LaravelHyperf\Foundation\Bus\Dispatchable` trait. Any arguments passed to the `dispatch` method will be passed to the event's constructor:
 
 ```php
 <?php
@@ -358,7 +358,7 @@ namespace App\Events;
 use App\Models\Order;
 use LaravelHyperf\Broadcasting\InteractsWithSockets;
 use LaravelHyperf\Events\Contracts\ShouldDispatchAfterCommit;
-use LaravelHyperf\Foundation\Events\Dispatchable;
+use LaravelHyperf\Foundation\Bus\Dispatchable;
 use LaravelHyperf\Queue\SerializesModels;
 
 class OrderShipped implements ShouldDispatchAfterCommit

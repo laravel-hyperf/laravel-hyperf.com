@@ -74,7 +74,7 @@ Of course, you may define your own authentication middleware, allowing you to cu
 
 You'll often need to check whether an authenticated user is authorized to perform a specific action. Laravel's model policies make it a breeze:
 
-```shell
+```shell:no-line-numbers
 php artisan make:policy UserPolicy
 ```
 
@@ -99,7 +99,7 @@ public function update(Request $request, Invoice $invoice)
 
 Scared of databases? Don't be. Laravel Hyperf’s Eloquent ORM makes it painless to interact with your application's data, and models, migrations, and relationships can be quickly scaffolded:
 
-```shell
+```shell:no-line-numbers
 php artisan make:model Invoice --migration
 ```
 
@@ -176,7 +176,7 @@ public function update(Request $request)
 
 Use Laravel Hyperf to quickly send beautifully styled notifications to your users via email, Slack, SMS, in-app, and more:
 
-```shell
+```shell:no-line-numbers
 php artisan make:notification InvoicePaid
 ```
 
@@ -226,7 +226,7 @@ ProcessPodcast::dispatch($podcast)->onQueue('podcasts');
 
 You can run as many queue workers as you need to handle your workload:
 
-```shell
+```shell:no-line-numbers
 php artisan queue:work redis --queue=podcasts
 ```
 
@@ -356,7 +356,7 @@ export default {
     }
 
     categoryItems.forEach(item => {
-      item.addEventListener('mouseenter', () => {
+      item.addEventListener('click', () => {
         const category = item.getAttribute('data-category');
 
         // Update code blocks

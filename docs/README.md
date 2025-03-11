@@ -333,9 +333,9 @@ Echo.private(`orders.${orderId}`)
 
 <div class="custom-container tip">
 <p><strong>Why don't we just use Octane directly?</strong></p>
-<p> Octane accelerates Laravel by maintaining the framework in a persistent application state, resetting request-scoped resources between requests. However, it doesn't introduce non-blocking I/O capabilities to Laravel's architecture.
+<p> Octane accelerates Laravel by maintaining the framework in a persistent application state, resetting request-scoped resources between requests. However, it doesn't introduce non-blocking I/O capabilities to Laravel's architecture. Furthermore, all components in Laravel weren't designed with coroutines in mind. It will cause states pollution while context switching among coroutines.
 
-In contrast, Laravel Hyperf natively implements coroutines and is architected specifically for persistent application states. This fundamental design difference delivers exceptional performance and concurrency capabilities without the resource overhead of multiple processes, enabling truly efficient scaling even under high I/O workloads.
+For I/O-intensive scenarios, even with Octane's improvements, your application's ability to handle concurrent requests is still limited by the duration of these I/O operations.
 </p>
 </div>
 

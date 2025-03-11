@@ -19,7 +19,7 @@ export default defineUserConfig({
   plugins: [
     seoPlugin({
       hostname: 'https://laravel-hyperf.com',
-      fallBackImage: '/icon.png',
+      fallBackImage: '/home.png',
       ogp: (ogp, page) => ({
         ...ogp,
         'og:title': 'Laravel Hyperf - A Laravel-Style PHP Framework For Web Artisans',

@@ -72,7 +72,7 @@ Of course, you may define your own authentication middleware, allowing you to cu
 
 ### Authorization
 
-You'll often need to check whether an authenticated user is authorized to perform a specific action. Laravel's model policies make it a breeze:
+You'll often need to check whether an authenticated user is authorized to perform a specific action. Laravel Hyperf's model policies make it a breeze:
 
 ```shell:no-line-numbers
 php artisan make:policy UserPolicy
@@ -197,10 +197,11 @@ $user->notify(new InvoicePaid($invoice));
 Laravel Hyperf provides a robust filesystem abstraction layer, providing a single, unified API for interacting with local filesystems and cloud based filesystems like Amazon S3:
 
 ```php
-$path = $request->file('avatar')->store('s3');
+$path = Storage::disk('s3')
+    ->put('avatars/1', $request->file('avatar'));
 ```
 
-Regardless of where your files are stored, interact with them using Laravel's simple, elegant syntax:
+Regardless of where your files are stored, interact with them using Laravel Hyperf's simple, elegant syntax:
 
 ```php
 $content = Storage::get('photo.jpg');

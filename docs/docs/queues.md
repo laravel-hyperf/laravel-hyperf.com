@@ -1595,12 +1595,6 @@ php artisan queue:work
 To keep the `queue:work` process running permanently in the background, you should use a process monitor such as [Supervisor](#supervisor-configuration) to ensure that the queue worker does not stop running.
 :::
 
-You may include the `-v` flag when invoking the `queue:work` command if you would like the processed job IDs to be included in the command's output:
-
-```shell:no-line-numbers
-php artisan queue:work -v
-```
-
 Remember, queue workers are long-lived processes and store the booted application state in memory. As a result, they will not notice changes in your code base after they have been started. So, during your deployment process, be sure to [restart your queue workers](#queue-workers-and-deployment). In addition, remember that any static state created or modified by your application will not be automatically reset between jobs.
 
 Alternatively, you may run the `queue:listen` command. When using the `queue:listen` command, you don't have to manually restart the worker when you want to reload your updated code or reset the application state; however, this command is significantly less efficient than the `queue:work` command:
@@ -1612,6 +1606,20 @@ php artisan queue:listen
 #### Running Multiple Queue Workers
 
 To assign multiple workers to a queue and process jobs concurrently, you should simply start multiple `queue:work` processes. This can either be done locally via multiple tabs in your terminal or in production using your process manager's configuration settings. [When using Supervisor](#supervisor-configuration), you may use the `numprocs` configuration value.
+
+#### Concurrent Processing in Single Queue Worker
+
+Unlike in Laravel, queue workers in Laravel Hyperf support concurrent processing using coroutines. For I/O-bound queue jobs, you can simply utilize the concurrency option to execute multiple jobs simultaneously within a single worker.
+
+```shell:no-line-numbers
+php artisan queue:work --concurrency=10
+```
+
+In this example, you maintain just one worker process while running 10 coroutines that process jobs concurrently. Traditional Laravel requires scaling by increasing the number of worker processes, but Laravel Hyperf's coroutine implementation delivers significantly higher efficiency with minimal resource overhead.
+
+::: note
+For CPU-bound queue jobs, coroutines offer limited performance benefits. To maximize CPU core utilization, you should still run multiple worker processes to effectively distribute computational workload across your available CPU resources.
+:::
 
 #### Specifying the Connection and Queue
 

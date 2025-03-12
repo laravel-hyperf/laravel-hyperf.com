@@ -699,7 +699,6 @@ Below is a list of all available validation rules and their function:
 [Between](#rule-between)
 [Boolean](#rule-boolean)
 [Confirmed](#rule-confirmed)
-[Current Password](#rule-current-password)
 [Date](#rule-date)
 [Date Equals](#rule-date-equals)
 [Date Format](#rule-date-format)

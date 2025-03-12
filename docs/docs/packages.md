@@ -1,3 +1,6 @@
+# Package Development
+[[toc]]
+
 ## Introduction
 
 Packages are the primary way of adding functionality to Laravel Hyperf. There are different types of packages. Some packages are stand-alone, meaning they work with any PHP framework. Carbon and PHPUnit are examples of stand-alone packages. Any of these packages may be used with Laravel Hyperf by requiring them in your `composer.json` file.

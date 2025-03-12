@@ -9,7 +9,7 @@ Before creating your first Laravel Hyperf project, make sure that your local mac
 pecl install swoole
 ```
 
-For Mac users, you can also install Swoole via brew:
+Mac users can also install Swoole via brew:
 
 ```shell:no-line-numbers
 brew tap shivammathur/extensions

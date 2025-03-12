@@ -7,7 +7,7 @@ When you're ready to deploy your Laravel Hyperf application to production, there
 
 ## Server Requirements
 
-The Laravel Hyperf framework has a few system requirements. You should ensure that your web server has the following minimum PHP version and extensions:
+Laravel Hyperf has a few system requirements. You should ensure that your web server has the following minimum PHP version and extensions:
 
  - PHP >= 8.2
  - [Swoole PHP extension](https://github.com/swoole/swoole-src) >= 5.1

@@ -333,7 +333,7 @@ Echo.private(`orders.${orderId}`)
 </div>
 
 <div class="custom-container tip">
-<p><strong>Why don't we just use Octane directly?</strong></p>
+<p><strong>Why not use Octane directly?</strong></p>
 <p> Octane accelerates Laravel by maintaining the framework in a persistent application state, resetting request-scoped resources between requests. However, it doesn't introduce non-blocking I/O capabilities to Laravel's architecture. Furthermore, all components in Laravel weren't designed with coroutines in mind. It will cause states pollution while context switching among coroutines.
 
 For I/O-intensive scenarios, even with Octane's improvements, your application's ability to handle concurrent requests is still limited by the duration of these I/O operations.

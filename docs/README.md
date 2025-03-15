@@ -250,8 +250,8 @@ Laravel Hyperf's scheduler can even handle multiple servers and offers built-in 
 ```php
 $schedule->job(NotifySubscribers::class)
     ->dailyAt('9:00')
-    ->setOnOneServer(true)
-    ->setMutexPool('notify-subscribers');
+    ->onOneServer()
+    ->withoutOverlapping();
 ```
 
 [Read Task Scheduling docs](/docs/scheduling)

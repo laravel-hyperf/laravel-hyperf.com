@@ -20,7 +20,7 @@ footer: MIT Licensed | Copyright © 2024-present Laravel Hyperf
 ---
 
 
-## Coding Like in Laravel Framework
+## Coding Like in Laravel
 
 Laravel artisans can enjoy a familiar development experience that mirrors the original framework. The simple, elegant syntax remains intact, enabling developers to stay productive while leveraging enhanced performance.
 

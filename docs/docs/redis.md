@@ -94,6 +94,25 @@ To configure Redis Sentinel in your Laravel Hyperf application, you can use the 
 
 When Sentinel is enabled, Laravel Hyperf will automatically handle failover scenarios by connecting to the current Redis master node as determined by the Sentinel cluster.
 
+### Connection Pooling
+
+Laravel Hyperf implements connection pooling for Redis to efficiently manage and reuse Redis connections. Connection pooling helps improve performance by maintaining a pool of pre-established connections that can be reused across requests, rather than creating and destroying connections for each operation. This reduces connection overhead and improves response times, especially in high-concurrency scenarios.
+
+
+```php
+'redis' => [
+    'default' => [
+    'pool' => [
+        'min_connections' => 1,
+        'max_connections' => 10,
+        'connect_timeout' => 10.0,
+        'wait_timeout' => 3.0,
+        'heartbeat' => -1,
+        'max_idle_time' => (float) env('REDIS_MAX_IDLE_TIME', 60),
+    ],
+],
+```
+
 ### Other Configuration
 
 In addition to the default configuration options, PhpRedis supports the following additional connection parameters: `name`, `persistent`, `persistent_id`, `prefix`, `read_timeout`, `retry_interval`, `max_retries`, `backoff_algorithm`, `backoff_base`, `backoff_cap`, `timeout`, and `context`. You may add any of these options to your Redis server configuration in the `config/database.php` configuration file:

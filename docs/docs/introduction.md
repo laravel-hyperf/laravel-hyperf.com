@@ -224,6 +224,8 @@ Transfer/sec:      1.96MB
 ```
 :::
 
+> Laravel Octane's QPS number is close to 8, but because it differs so significantly from Laravel Hyperf's numbers, it appears this way when generated in the chart.
+
 ::: note
 The QPS results for Laravel Hyperf have little difference between 1 worker and 8 workers configurations. Both configurations achieve approximately 10000 QPS. That means there's limitation in the benchmarking environment. In real cases Laravel Hyperf should have much better performance.
 :::

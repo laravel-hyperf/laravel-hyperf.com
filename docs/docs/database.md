@@ -88,6 +88,41 @@ You only need to place items in the `read` and `write` arrays if you wish to ove
 
 The `sticky` option is an *optional* value that can be used to allow the immediate reading of records that have been written to the database during the current request cycle. If the `sticky` option is enabled and a "write" operation has been performed against the database during the current request cycle, any further "read" operations will use the "write" connection. This ensures that any data written during the request cycle can be immediately read back from the database during that same request. It is up to you to decide if this is the desired behavior for your application.
 
+### Connection Pooling
+
+Laravel Hyperf implements database connection pooling to efficiently manage and reuse database connections across coroutines. Connection pooling helps improve performance by reducing the overhead of establishing new database connections for each request.
+
+```php
+'mysql' => [
+    'pool' => [
+        'min_connections' => 1,
+        'max_connections' => 10,
+        'connect_timeout' => 10.0,
+        'wait_timeout' => 3.0,
+        'heartbeat' => -1,
+        'max_idle_time' => (float) env('DB_MAX_IDLE_TIME', 60),
+    ]
+],
+```
+
+Each configuration option serves a specific purpose:
+
+- `min_connections`: The minimum number of connections that will be created and maintained in the pool, ensuring a base level of available connections.
+- `max_connections`: The maximum number of connections that can be created. When all connections are in use and a new request arrives, it will wait for an available connection.
+- `connect_timeout`: The maximum time to wait while trying to establish a new database connection.
+- `wait_timeout`: The maximum time to wait for an available connection from the pool before throwing an exception.
+- `heartbeat`: The interval at which the pool checks if connections are still alive.
+- `max_idle_time`: The maximum time a connection can remain idle in the pool before being closed.
+
+The connection pool automatically handles connection lifecycle management:
+
+1. When a connection is requested, the pool first tries to reuse an existing idle connection
+2. If no idle connections are available and the pool hasn't reached `max_connections`, a new connection is created
+3. If the pool is at capacity, the request waits up to `wait_timeout` seconds for a connection to become available
+4. After use, connections are returned to the pool instead of being closed, allowing for reuse
+
+This approach significantly reduces the overhead of database operations in high-concurrency scenarios by eliminating the need to establish new connections for each request.
+
 ## Running SQL Queries
 
 Once you have configured your database connection, you may run queries using the `DB` facade. The `DB` facade provides methods for each type of query: `select`, `update`, `insert`, `delete`, and `statement`.

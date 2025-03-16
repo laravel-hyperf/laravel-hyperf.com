@@ -307,7 +307,6 @@ However, it's not going to work in this case. This is because the `defer` functi
 To handle exceptions in deferred functions, you should implement error handling within the deferred function itself:
 
 ```php
-<?php
 defer(function () {
     try {
         // Code that might throw an exception

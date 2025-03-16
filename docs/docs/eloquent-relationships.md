@@ -18,6 +18,10 @@ Database tables are often related to one another. For example, a blog post may h
 
 </div>
 
+::: note
+Laravel Hyperf's Eloquent is a forked version in the Hyperf framework, which was derived from an early version of Laravel. Some newer Eloquent features from recent Laravel versions may not be supported in this component.
+:::
+
 ## Defining Relationships
 
 Eloquent relationships are defined as methods on your Eloquent model classes. Since, like Eloquent models themselves, relationships also serve as powerful [query builders](/docs/queries), defining relationships as methods provides powerful method chaining and querying capabilities. For example, we may chain additional constraints on this `posts` relationship:
@@ -28,7 +32,9 @@ $user->posts()->where('active', 1)->get();
 
 But, before diving too deep into using relationships, let's learn how to define each type.
 
-> {note} Relationship names cannot collide with attribute names as that could lead to your model not being able to know which one to resolve.
+::: note
+Relationship names cannot collide with attribute names as that could lead to your model not being able to know which one to resolve.
+:::
 
 ### One To One
 
@@ -95,7 +101,9 @@ Order::resolveRelationUsing('customer', function ($orderModel) {
 });
 ```
 
-> {note} When defining dynamic relationships, always provide explicit key name arguments to the Eloquent relationship methods.
+::: note
+When defining dynamic relationships, always provide explicit key name arguments to the Eloquent relationship methods.
+:::
 
 ## Querying Relations
 

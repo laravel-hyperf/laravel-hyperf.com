@@ -477,8 +477,9 @@ collect(['1', '2'])->containsOneItem();
 
 This method has the same signature as the [`contains`](#method-contains) method; however, all values are compared using "strict" comparisons.
 
-> [!NOTE]
-> This method's behavior is modified when using [Eloquent Collections](/docs/eloquent-collections#method-contains).
+::: note
+This method's behavior is modified when using [Eloquent Collections](/docs/eloquent-collections#method-contains).
+:::
 
 <a name="method-count"></a>
 #### `count()`

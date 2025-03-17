@@ -619,8 +619,9 @@ The `geometry` method creates a `GEOMETRY` equivalent column with the given spat
 $table->geometry('positions', subtype: 'point', srid: 0);
 ```
 
-> [!NOTE]
-> Support for spatial types depends on your database driver. Please refer to your database's documentation. If your application is utilizing a PostgreSQL database, you must install the [PostGIS](https://postgis.net) extension before the `geometry` method may be used.
+::: note
+Support for spatial types depends on your database driver. Please refer to your database's documentation. If your application is utilizing a PostgreSQL database, you must install the [PostGIS](https://postgis.net) extension before the `geometry` method may be used.
+:::
 
 <a name="column-method-id"></a>
 #### id()

@@ -1302,10 +1302,8 @@ class Book extends Model
 {
     /**
      * The relationships that should always be loaded.
-     *
-     * @var array
      */
-    protected $with = ['author'];
+    protected array $with = ['author'];
 
     /**
      * Get the author that wrote the book.

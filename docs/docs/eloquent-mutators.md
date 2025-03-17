@@ -120,10 +120,8 @@ class User extends Model
 {
     /**
      * The attributes that should be cast.
-     *
-     * @var array
      */
-    protected $casts = [
+    protected array $casts = [
         'is_admin' => 'boolean',
     ];
 }
@@ -167,10 +165,8 @@ class User extends Model
 {
     /**
      * The attributes that should be cast.
-     *
-     * @var array
      */
-    protected $casts = [
+    protected array $casts = [
         'options' => 'array',
     ];
 }
@@ -201,10 +197,8 @@ When defining a `date` or `datetime` cast, you may also specify the date's forma
 ```php
 /**
  * The attributes that should be cast.
- *
- * @var array
  */
-protected $casts = [
+protected array $casts = [
     'created_at' => 'datetime:Y-m-d',
 ];
 ```
@@ -231,8 +225,6 @@ To specify the format that should be used when actually storing a model's dates 
 ```php
 /**
  * The storage format of the model's date columns.
- *
- * @var string
  */
-protected $dateFormat = 'U';
+protected string $dateFormat = 'U';
 ```

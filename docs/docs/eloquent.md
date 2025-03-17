@@ -271,10 +271,8 @@ class Flight extends Model
 {
     /**
      * The database connection that should be used by the model.
-     *
-     * @var string
      */
-    protected $connection = 'mysql';
+    protected ?string $connection = 'mysql';
 }
 ```
 
@@ -784,10 +782,8 @@ class Flight extends Model
 {
     /**
      * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
      */
-    protected $fillable = ['name'];
+    protected array $fillable = ['name'];
 }
 ```
 
@@ -810,10 +806,8 @@ When assigning JSON columns, each column's mass assignable key must be specified
 ```php
 /**
  * The attributes that are mass assignable.
- *
- * @var array<int, string>
  */
-protected $fillable = [
+protected array $fillable = [
     'options->enabled',
 ];
 ```
@@ -825,10 +819,8 @@ If you would like to make all of your attributes mass assignable, you may define
 ```php
 /**
  * The attributes that aren't mass assignable.
- *
- * @var array<string>|bool
  */
-protected $guarded = [];
+protected array $guarded = [];
 ```
 
 #### Mass Assignment Exceptions

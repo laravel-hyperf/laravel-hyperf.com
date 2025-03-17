@@ -15,7 +15,7 @@ Unlike Laravel, Laravel Hyperf supports coroutine capabilities out of the box. A
 
 Coroutines are functions that can pause their execution and later resume from where they left off, maintaining their state between pauses. Think of them as functions with multiple entry and exit points.
 
-The key mechanism behind coroutines is a concept called "cooperative multitasking." Unlike threads where the operating system controls when to switch between tasks, coroutines voluntarily yield control at specific points in their code. This is typically done at I/O operations or when explicitly yielding.
+The key mechanism behind coroutines is a concept called "cooperative multitasking." Unlike processes or threads where the operating system controls when to switch between tasks, coroutines voluntarily yield control at specific points in their code. This is typically done at I/O operations or when explicitly yielding.
 
 When a coroutine encounters an operation that would normally block (like waiting for network data), instead of blocking the entire program, it yields control back to a scheduler. The scheduler can then run other coroutines until the blocking operation completes.
 

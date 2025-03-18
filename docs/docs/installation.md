@@ -22,6 +22,12 @@ brew install shivammathur/extensions/swoole@8.3
 You can also use [Box](https://hyperf.wiki/3.1/#/en/eco/box.md) as your runtime environment.
 :::
 
+::: tip
+It's recommended to set `swoole.use_shortname` to `Off` in your `php.ini` file for catching errors in coroutines if you plan to use global coroutine helpers such as `go`, `co` and `defer`. Otherwise it will throw `Uncaught RuntimeException` when errors in coroutines are not properly caught.
+
+See [Wrong Way to Handle Throwables](/docs/coroutine#error-handling-in-coroutines) for more information.
+:::
+
 After you have installed PHP, Composer and Swoole extension, you may create a new Laravel Hyperf project via Composer's `create-project` command:
 
 ```shell:no-line-numbers

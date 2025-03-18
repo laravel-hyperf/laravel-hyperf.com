@@ -173,6 +173,53 @@ Each nested coroutine:
 * Has its own context storage (context are separated)
 * Can be created to any depth (within memory constraints)
 
+### Error Handling in Coroutines
+
+The key principle to remember is that a try/catch block should only operate within a single coroutine. Think of a coroutine as an isolated try/catch cannot span across multiple coroutines. This is because coroutines execute independently in their own contexts, separate from where the try/catch is defined, making it impossible to catch exceptions thrown in different coroutines.
+
+#### Wrong Way to Handle Throwables
+
+```php
+use function LaravelHyperf\Coroutine\go;
+
+try {
+    go(function () {
+        throw new \RuntimeException('test');
+    });
+} catch (\Throwable $e) {
+    echo $e;
+}
+```
+
+The example above is wrong because it creates a new coroutine context inside the try block. This approach is problematic since any errors occurring within the coroutine won't be caught—the call to `go()` returns immediately and execution continues. Exceptions must be thrown and caught within the same coroutine, not across different ones.
+
+::: info
+If you set `swoole.use_shortname` to `Off` in your `php.ini`, and you use global coroutines functions without the namespace. Unhandled errors will be caught automatically and be printed out to the console.
+:::
+
+#### Right Way to Handle Throwables
+
+```php
+<?php
+
+function test()
+{
+    throw new \RuntimeException('test');
+}
+
+go(function () {
+    try {
+        test();
+    } catch (\Throwable $e) {
+        echo $e;
+    }
+});
+```
+
+The correct example demonstrates how to properly implement error handling by placing the try/catch block entirely within the same coroutine—similar to traditional PHP error handling in a single process. For simplicity, you can conceptualize coroutines as userland threads: they share the same process but maintain separate execution contexts, which is why try/catch blocks cannot work across multiple coroutines.
+
+In the proper implementation, the coroutine is established first, and the try/catch block operates completely within that coroutine, successfully catching any exceptions that occur. Always ensure your try/catch blocks exist within the same coroutine where potential exceptions might be thrown.
+
 ### Channel
 
 Coroutines can be considered as application-level executing units controlled by the process itself. However, how to make coroutines communicate each other? Swoole adapts [CSP (Communicating Sequential Processes)](https://en.wikipedia.org/wiki/Communicating_sequential_processes) for communication in coroutines like in Golang. The core concept of this theory is:

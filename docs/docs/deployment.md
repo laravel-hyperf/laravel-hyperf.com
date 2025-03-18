@@ -18,10 +18,6 @@ Laravel Hyperf has a few system requirements. You should ensure that your web se
  - OpenSSL PHP extension (If you need to use the HTTPS)
  - Redis PHP extension (If you need to use the Redis Client)
 
-::: warning
-You should set `swoole.use_shortname` to `Off` in your `php.ini` file if you plan to use global coroutine helpers such as `go`, `co` and `defer`.
-:::
-
 ### Docker
 
 If you plan to deploy your application via docker, you can find various Dockerfiles in the [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) project, or use a pre-built image based on [hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf).

@@ -15,13 +15,11 @@ When running tests via `vendor/bin/phpunit`, Laravel Hyperf will automatically s
 
 You are free to define other testing environment configuration values as necessary. The `testing` environment variables may be configured in the `phpunit.xml` file, but make sure to clear your configuration cache using the `config:clear` Artisan command before running your tests!
 
-In addition, you may create a `.env.testing` file in the root of your project. This file will override the `.env` file when running PHPUnit tests or executing Artisan commands with the `--env=testing` option.
-
 ## Creating & Running Tests
 
 To create a new test case, use the `make:test` Artisan command:
 
-```php
+```shell:no-line-numbers
 // Create a test in the Feature directory...
 php artisan make:test UserTest
 

@@ -271,7 +271,7 @@ $request->session()->invalidate();
 ## Session Blocking
 
 ::: warning
-To utilize session blocking, your application must be using a cache driver that supports [atomic locks](/docs/atomic-locks). Currently, those cache drivers include the `redis`, `database`, `file`, and `array` drivers. In addition, you may not use the `cookie` session driver.
+To utilize session blocking, your application must be using a cache driver that supports [atomic locks](/docs/cache#atomic-locks). Currently, those cache drivers include the `redis`, `database`, `file`, and `array` drivers. In addition, you may not use the `cookie` session driver.
 :::
 
 By default, Laravel Hyperf allows requests using the same session to execute concurrently. So, for example, if you use a JavaScript HTTP library to make two HTTP requests to your application, they will both execute at the same time. For many applications, this is not a problem; however, session data loss can occur in a small subset of applications that make concurrent requests to two different application endpoints which both write data to the session.
@@ -337,7 +337,7 @@ Since the purpose of these methods is not readily understandable, let's quickly 
 
 ### Registering the Driver
 
-Once your driver has been implemented, you are ready to register it with Laravel Hyperf. To add additional drivers to Laravel Hyperf's session backend, you may use the `extend` method provided by the `Session` [facade](/docs/facade). You should call the `extend` method from the `boot` method of a [service provider](/docs/providers). You may do this from the existing `App\Providers\AppServiceProvider` or create an entirely new provider:
+Once your driver has been implemented, you are ready to register it with Laravel Hyperf. To add additional drivers to Laravel Hyperf's session backend, you may use the `extend` method provided by the `Session` [facade](/docs/facades). You should call the `extend` method from the `boot` method of a [service provider](/docs/providers). You may do this from the existing `App\Providers\AppServiceProvider` or create an entirely new provider:
 
 ```php
 <?php

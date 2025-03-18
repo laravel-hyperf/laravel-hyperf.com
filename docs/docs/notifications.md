@@ -1162,7 +1162,7 @@ Next, copy the App's "Bot User OAuth Token" and place it within a `slack` config
 
 #### App Distribution
 
-If your application will be sending notifications to external Slack workspaces that are owned by your application's users, you will need to "distribute" your App via Slack. App distribution can be managed from your App's "Manage Distribution" tab within Slack. Once your App has been distributed, you may use [Socialite](/docs/socialite) to [obtain Slack Bot tokens](/docs/socialite#slack-bot-scopes) on behalf of your application's users.
+If your application will be sending notifications to external Slack workspaces that are owned by your application's users, you will need to "distribute" your App via Slack. App distribution can be managed from your App's "Manage Distribution" tab within Slack.
 
 ### Formatting Slack Notifications
 
